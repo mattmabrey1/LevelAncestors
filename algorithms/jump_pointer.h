@@ -15,9 +15,5 @@ unsigned int **jump_table;
 void jump_pointer_preprocessing();
 
 int jump_pointer_query(int query_node, int query_level);
-
-void add_jump_pointer_leaf(int parent);
-
-void remove_jump_pointer_leaf(int leaf);
 /************************************************************************/
 #endif

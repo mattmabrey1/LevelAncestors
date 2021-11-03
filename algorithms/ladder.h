@@ -21,9 +21,5 @@ unsigned int *ladder_roots;
 void ladder_preprocessing();
 
 int ladder_query(int query_node, int query_level);
-
-void add_ladder_leaf(int parent);
-
-void remove_ladder_leaf(int leaf);
 /************************************************************************/
 #endif

@@ -80,18 +80,4 @@
     } while (mydiff > mypow);
   }
   /************************************************************************/
-
-  /************************************************************************/
-  /* Tree Manipulation						*/
-  /************************************************************************/
-  void add_jump_pointer_leaf(int parent){
-      printf("Error: Function Not Yet Implemented!\n");
-      exit(-1);
-  }   
-
-  void remove_jump_pointer_leaf(int leaf){
-      printf("Error: Function Not Yet Implemented!\n");
-      exit(-1);
-  }
-  /************************************************************************/
 #endif

@@ -34,9 +34,5 @@ int max_depth, y_min, y_max;
 void hagerup_preprocessing();
 
 int hagerup_query(int query_node, int query_level);
-
-void add_hagerup_leaf(int parent);
-
-void remove_hagerup_leaf(int leaf);
 /************************************************************************/
 #endif

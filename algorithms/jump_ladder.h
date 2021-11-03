@@ -9,9 +9,5 @@
 void jump_ladder_preprocessing();
 
 int jump_ladder_query(int query_node, int query_level);
-
-void add_jump_ladder_leaf(int parent);
-
-void remove_jump_ladder_leaf(int leaf);
 /************************************************************************/
 #endif

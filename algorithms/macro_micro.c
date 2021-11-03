@@ -254,18 +254,4 @@
     }
   }
   /************************************************************************/
-
-  /************************************************************************/
-  /* Tree Manipulation						*/
-  /************************************************************************/
-  void add_macro_micro_leaf(int parent){
-      printf("Error: Function Not Yet Implemented!\n");
-      exit(-1);
-  }   
-
-  void remove_macro_micro_leaf(int leaf){
-      printf("Error: Function Not Yet Implemented!\n");
-      exit(-1);
-  }
-  /************************************************************************/
 #endif

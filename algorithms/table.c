@@ -47,18 +47,4 @@
     return big_table[q_node][q_level];
   }
   /************************************************************************/
-
-  /************************************************************************/
-  /* Tree Manipulation						*/
-  /************************************************************************/
-  void add_table_leaf(int parent){
-      printf("Error: Function Not Yet Implemented!\n");
-      exit(-1);
-  }   
-
-  void remove_table_leaf(int leaf){
-      printf("Error: Function Not Yet Implemented!\n");
-      exit(-1);
-  }
-  /************************************************************************/
 #endif

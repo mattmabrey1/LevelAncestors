@@ -174,18 +174,4 @@
     return query_answer;
   }
   /************************************************************************/
-
-  /************************************************************************/
-  /* Tree Manipulation						*/
-  /************************************************************************/
-  void add_menghani_matani_leaf(int parent){
-      printf("Error: Function Not Yet Implemented!\n");
-      exit(-1);
-  }   
-
-  void remove_menghani_matani_leaf(int leaf){
-      printf("Error: Function Not Yet Implemented!\n");
-      exit(-1);
-  }
-  /************************************************************************/
 #endif

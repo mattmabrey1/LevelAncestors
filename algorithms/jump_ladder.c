@@ -46,18 +46,4 @@
     }
   }
   /************************************************************************/
-
-  /************************************************************************/
-  /* Tree Manipulation						*/
-  /************************************************************************/
-  void add_jump_ladder_leaf(int parent){
-      printf("Error: Function Not Yet Implemented!\n");
-      exit(-1);
-  }   
-
-  void remove_jump_ladder_leaf(int leaf){
-      printf("Error: Function Not Yet Implemented!\n");
-      exit(-1);
-  }
-  /************************************************************************/
 #endif

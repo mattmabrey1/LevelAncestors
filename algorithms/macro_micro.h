@@ -33,9 +33,5 @@ void create_micro_table(unsigned int signature, int size);
 void macro_micro_preprocessing();
 
 int macro_micro_query(int query_node, int query_level);
-
-void add_macro_micro_leaf(int parent);
-
-void remove_macro_micro_leaf(int leaf);
 /************************************************************************/
 #endif

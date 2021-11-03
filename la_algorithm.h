@@ -11,11 +11,6 @@
     #define LA_ALGORITHM TABLE
 #endif
 
-// Preprocessing directive to determine if algorithms should be dynamic or static
-#ifndef LA_DYNAMIC
-    #define LA_DYNAMIC 0
-#endif
-
 #ifndef LA_ALGORITHM_H
 
     #define LA_ALGORITHM_H
@@ -51,10 +46,6 @@
     int la_query(int query_node, int query_level);
 
     void validate_query_answer(int query_node, int query_answer);
-
-    void add_leaf(int parent);
-
-    void remove_leaf(int leaf);
     /************************************************************************/
 
 #endif

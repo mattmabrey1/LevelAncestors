@@ -36,9 +36,5 @@ void meta_binary_search(int d, int* l, int* r, int goal, int max);
 int binary_search(int d, int l, int r, int goal, int max);
 
 int menghani_matani_query(int query_node, int query_level);
-
-void add_menghani_matani_leaf(int parent);
-
-void remove_menghani_matani_leaf(int leaf);
 /************************************************************************/
 #endif
