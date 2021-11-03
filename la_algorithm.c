@@ -2,25 +2,59 @@
 
 void la_initialize(){
 
-    #if LA_ALGORITHM == MENGHANI_MATANI
+    int i;
 
-        depth_count = (int*)calloc(n, sizeof(int));
-        depth_meta_count = (int*)calloc(n, sizeof(int));
-        depth_size = (int*)calloc(n, sizeof(int));
-        depth_meta_size = (int*)calloc(n, sizeof(int));
+    #if LA_ALGORITHM == STATIC
 
-        depth_size[0] = 1;
+        tree = alloc(n*(sizeof(node)));
 
-    #elif LA_ALGORITHM == HAGERUP
+        for (i = 0; i < n; i++){
+            tree[i].parent = tree[i].left = tree[i].right = -1;
+        }
 
-        euler_arr = alloc((2 * n - 2) * sizeof(int));
-        rep_arr = alloc(n * sizeof(int));
+        tree[0].depth = 0;
 
-        rep_arr[0] = 0;
-        euler_arr[0] = 0;
+        #if LA_ALGORITHM == MENGHANI_MATANI
 
-        K = 5;
-        max_depth = -1;
+            depth_count = (int*)calloc(n, sizeof(int));
+            depth_meta_count = (int*)calloc(n, sizeof(int));
+            depth_size = (int*)calloc(n, sizeof(int));
+            depth_meta_size = (int*)calloc(n, sizeof(int));
+
+            depth_size[0] = 1;
+
+        #elif LA_ALGORITHM == HAGERUP
+
+            euler_arr = alloc((2 * n - 2) * sizeof(int));
+            rep_arr = alloc(n * sizeof(int));
+
+            rep_arr[0] = 0;
+            euler_arr[0] = 0;
+
+            K = 5;
+            max_depth = -1;
+        #endif
+
+    #elif LA_ALGORITHM == DYNAMIC
+
+        vec_init(&tree);
+        vec_init(&leaves);
+
+        vec_reserve(&tree, n);
+	    vec_reserve(&leaves, (1 << log_base2(n)));
+
+        vec_push(&leaves, 0);
+
+        node* new_node;
+
+        for(i = 0; i < tree.capacity; i++)
+        {
+            new_node = alloc(sizeof(node));
+            vec_push(&tree, new_node);
+            new_node->parent = new_node->left = new_node->right = new_node->depth = new_node->leaf_pos = -1;
+        }
+
+        tree.data[0]->depth = tree.data[0]->leaf_pos = 0;
     #endif
 }
 
@@ -102,10 +136,17 @@ int la_query(int query_node, int query_level){
 void validate_query_answer(int query_node, int query_answer){
 
     int curr_parent = query_node;
+    int node_depth;
 
  	while(curr_parent >= 0){
 
- 		if(tree[curr_parent].depth == query_level){
+        #if LA_ALGORITHM == STATIC
+            node_depth = tree[curr_parent].depth;
+        #elif LA_ALGORITHM == DYNAMIC
+            node_depth = tree.data[curr_parent]->depth;
+        #endif
+        
+ 		if(node_depth == query_level){
 				
  			if(curr_parent != query_answer){
  				printf("ERROR: REAL LA(%d, %d) = %d\n", query_node, query_level, curr_parent);
@@ -114,7 +155,12 @@ void validate_query_answer(int query_node, int query_answer){
  			return;
  		}
 
- 		curr_parent = tree[curr_parent].parent;
+        #if LA_ALGORITHM == STATIC
+            curr_parent = tree[curr_parent].parent;
+        #elif LA_ALGORITHM == DYNAMIC
+            curr_parent = tree.data[curr_parent]->parent;
+        #endif
+ 		
 	}
 
 	if(curr_parent == -1){
@@ -122,3 +168,75 @@ void validate_query_answer(int query_node, int query_answer){
         exit(-1);
     }	
 }
+
+#if LA_ALGORITHM == DYNAMIC
+
+    void add_leaf(int parent){
+
+        bool is_left_child = false;
+
+        node* parent_node = tree.data[parent];
+        node* leaf_node = alloc(sizeof(node));
+
+        vec_push(&tree, leaf_node);
+
+        leaf_node->parent = leaf_node->left = leaf_node->right = leaf_node->depth = leaf_node->leaf_pos = -1;
+
+        int leaf = tree.length - 1;
+
+        leaf_node->parent = parent;
+        leaf_node->depth = parent_node->depth + 1;
+
+        if (parent_node->left == -1) 
+        {
+            parent_node->left = leaf;
+
+            is_left_child = true;
+
+            vec_push(&leaves, leaf);
+            leaf_node->leaf_pos = leaves.length - 1;
+        }
+        else if(parent_node->right == -1)
+        {
+            parent_node->right = leaf;
+            
+            leaves.data[parent_node->leaf_pos] = leaf;
+            leaf_node->leaf_pos = parent_node->leaf_pos;
+            parent_node->leaf_pos = -1;
+        }
+        else
+        {
+            printf("Illegal input: Input tree is not binary\n");
+            exit(-1);
+        }
+
+        #if LA_ALGORITHM == TABLE
+            add_table_leaf(parent, leaf, is_left_child);
+        #elif LA_ALGORITHM == JUMP_POINTER
+            add_jump_pointer_leaf(parent, leaf, is_left_child);
+        #elif LA_ALGORITHM == LADDER
+            add_ladder_leaf(parent, leaf, is_left_child);
+        #elif LA_ALGORITHM == JUMP_LADDER
+            add_jump_ladder_leaf(parent, leaf, is_left_child);
+        #elif LA_ALGORITHM == MACRO_MICRO
+            add_macro_micro_leaf(parent, leaf, is_left_child);
+        #elif LA_ALGORITHM == MENGHANI_MATANI
+            add_menghani_matani_leaf(parent, leaf, is_left_child);
+        #elif LA_ALGORITHM == HAGERUP
+            add_hagerup_leaf(parent, leaf, is_left_child);
+        #endif
+    }   
+
+    void la_process_leaf_additions(){
+
+        int i, parent;
+        char c;
+
+        for (i = 0; i < query_num; i++)
+        {
+            parent = 0;
+
+            add_leaf(parent);
+        }
+    }
+#endif

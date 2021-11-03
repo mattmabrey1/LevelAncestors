@@ -21,8 +21,15 @@ struct mm_struct
   unsigned int aux;
 } *mm_table;
 
-unsigned int ***micro_tables;	/* Table to keep the table for the micro trees	*/
-unsigned int **mm_jump;		/* Table to keep the jump pointers		*/
+#if LA_ALGORITHM == STATIC
+  // Static data structures
+  unsigned int ***micro_tables;	/* Table to keep the table for the micro trees	*/
+  unsigned int **mm_jump;		/* Table to keep the jump pointers		*/
+
+#else
+  // Dynamic data structures
+
+#endif
 /************************************************************************/
 
 /************************************************************************/
@@ -34,8 +41,10 @@ void macro_micro_preprocessing();
 
 int macro_micro_query(int query_node, int query_level);
 
-void add_macro_micro_leaf(int parent);
+#if LA_ALGORITHM == DYNAMIC
+  void add_macro_micro_leaf(int parent, int leaf, bool is_left_child);
 
-void remove_macro_micro_leaf(int leaf);
+  void remove_macro_micro_leaf(int leaf);
+#endif
 /************************************************************************/
 #endif

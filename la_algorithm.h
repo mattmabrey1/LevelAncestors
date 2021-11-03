@@ -11,9 +11,36 @@
     #define LA_ALGORITHM TABLE
 #endif
 
-// Preprocessing directive to determine if algorithms should be dynamic or static
 #ifndef LA_DYNAMIC
-    #define LA_DYNAMIC 0
+    #define STATIC LA_ALGORITHM
+    #define DYNAMIC -1
+#else
+    #define STATIC -1
+    #define DYNAMIC LA_ALGORITHM
+#endif
+
+struct node_struct
+{
+    unsigned int parent;
+    unsigned int left, right;	/* Children pointers	*/
+    unsigned int depth;
+
+    #if LA_ALGORITHM == DYNAMIC
+    
+    unsigned int leaf_pos;
+    
+    #endif
+};
+typedef struct node_struct node;
+
+#if LA_ALGORITHM == DYNAMIC
+    #include "vec.h"
+
+    /* Creates the type node_vec_t for storing Nodes */
+    typedef vec_t(node*) node_vec_t;
+
+    /* Creates the type vec_vec_t for storing vectors */
+    typedef vec_t(vec_int_t*) vec_vec_t;
 #endif
 
 #ifndef LA_ALGORITHM_H
@@ -54,7 +81,20 @@
 
     void add_leaf(int parent);
 
-    void remove_leaf(int leaf);
+    void la_process_leaf_additions();
     /************************************************************************/
 
+    /************************************************************************/
+    /* Tree Data Structures							*/
+    /************************************************************************/
+    
+
+    unsigned int n;		/* The number of nodes in the tree			*/
+
+    #if LA_ALGORITHM == STATIC
+        node *tree;	/* Our tree, which will be also an array of nodes	*/
+    #else 
+        node_vec_t tree;
+        vec_int_t leaves;
+    #endif
 #endif

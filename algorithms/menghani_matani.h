@@ -14,16 +14,23 @@
 // minimum number of nodes to justify Log(Sqrt(N)) binary search. 
 #define SQRT_SEARCH_MINIMUM 65536
 
-int* depth_count;           // An array to keep track of how full each subarray is in the 2D depth_arr
-int* depth_meta_count;      // An array to keep track of how full each subarray is in the 2D depth_metaarrays
+#if LA_ALGORITHM == STATIC
+    // Static data structures
 
-int* depth_size;            // An array of the total number of nodes at each given tree depth level
-int* depth_meta_size;       // An array of the total number of nodes for each depth's meta array
+    int* depth_count;           // An array to keep track of how full each subarray is in the 2D depth_arr
+    int* depth_meta_count;      // An array to keep track of how full each subarray is in the 2D depth_metaarrays
 
-int** depth_arr;            // A 2D array of each tree depth level and all nodes at that depth in ascending label value
+    int* depth_size;            // An array of the total number of nodes at each given tree depth level
+    int* depth_meta_size;       // An array of the total number of nodes for each depth's meta array
 
-int** depth_metaarray_val;  // A 2D meta array to speed up binary search for very large arrays by tracking every ceil(sqrt(depth_size[d])) node's value
-int** depth_metaarray_pos;  // A 2D meta array to speed up binary search for very large arrays by tracking every ceil(sqrt(depth_size[d])) node's position in depth_arr 
+    int** depth_arr;            // A 2D array of each tree depth level and all nodes at that depth in ascending label value
+
+    int** depth_metaarray_val;  // A 2D meta array to speed up binary search for very large arrays by tracking every ceil(sqrt(depth_size[d])) node's value
+    int** depth_metaarray_pos;  // A 2D meta array to speed up binary search for very large arrays by tracking every ceil(sqrt(depth_size[d])) node's position in depth_arr 
+    
+#else
+    // Dynamic data structures
+#endif
 /************************************************************************/
 
 /************************************************************************/
@@ -37,8 +44,10 @@ int binary_search(int d, int l, int r, int goal, int max);
 
 int menghani_matani_query(int query_node, int query_level);
 
-void add_menghani_matani_leaf(int parent);
+#if LA_ALGORITHM == DYNAMIC
+    void add_menghani_matani_leaf(int parent, int leaf, bool is_left_child);
 
-void remove_menghani_matani_leaf(int leaf);
+    void remove_menghani_matani_leaf(int leaf);
+#endif
 /************************************************************************/
 #endif

@@ -6,7 +6,14 @@
 /************************************************************************/
 /* Jump-Pointers Algo Data Structures					*/
 /************************************************************************/
-unsigned int **jump_table;
+#if LA_ALGORITHM == STATIC
+    // Static data structures
+    unsigned int **jump_table;
+    
+#else
+    // Dynamic data structures
+    vec_vec_t jump_table;
+#endif
 /************************************************************************/
 
 /************************************************************************/
@@ -16,8 +23,12 @@ void jump_pointer_preprocessing();
 
 int jump_pointer_query(int query_node, int query_level);
 
-void add_jump_pointer_leaf(int parent);
+#if LA_ALGORITHM == DYNAMIC
+    void add_jump_pointers(int node);
 
-void remove_jump_pointer_leaf(int leaf);
+    void add_jump_pointer_leaf(int parent, int leaf, bool is_left_child);
+
+    void remove_jump_pointer_leaf(int leaf);
+#endif
 /************************************************************************/
 #endif
