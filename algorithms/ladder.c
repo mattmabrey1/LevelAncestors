@@ -205,7 +205,7 @@
         printf("\n");
       }
       
-      vec_init(&ladder_table ladders_num);
+      vec_init(&ladder_table);
       vec_reserve(&ladder_table, ladders_num);
       ladder_roots = alloc(ladders_num*sizeof(int*));
       ladder_index = alloc(n*sizeof(struct ladder_index_node));
@@ -217,7 +217,7 @@
       { 
         current_ladder_root = ladder_roots[current_ladder];
 
-        if (height[current_ladder_root] < tree.data[current_ladder_root].depth)
+        if (height[current_ladder_root] < tree.data[current_ladder_root]->depth)
         {
           ladder_pos = height[current_ladder_root];
           ladder_size = 2*height[current_ladder_root];
@@ -225,16 +225,15 @@
         }
         else
         {
-          ladder_pos = tree.data[current_ladder_root].depth;
-          ladder_size = height[current_ladder_root] + tree.data[current_ladder_root].depth;
-          upwards_extension = tree.data[current_ladder_root].depth-1;
+          ladder_pos = tree.data[current_ladder_root]->depth;
+          ladder_size = height[current_ladder_root] + tree.data[current_ladder_root]->depth;
+          upwards_extension = tree.data[current_ladder_root]->depth-1;
         }
 
         vec_int_t* ladder = alloc(sizeof(vec_int_t));
         vec_init(ladder);
         vec_reserve(ladder, ladder_size);
 
-        vec_push(ladder);
         ladder->length = ladder_size;
 
         current_node = current_ladder_root;
