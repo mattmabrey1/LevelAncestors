@@ -4,7 +4,7 @@
 
     #include "alstrup.h"
 
-    #if ALGORITHM == STATIC
+    #if LA_ALGORITHM == STATIC
         void alstrup_preprocessing(){
             printf("Error: Function Not Yet Implemented!\n");
             exit(-1);
@@ -56,7 +56,7 @@
             return -1;
         }
 
-    #elif ALGORITHM == DYNAMIC
+    #elif LA_ALGORITHM == DYNAMIC
         /************************************************************************/
         /* Preprocessing						*/
         /************************************************************************/
@@ -176,6 +176,7 @@
         // Do a top-down DFS of the tree T to create micro trees. Try to add node V to it's parent's micro tree, if it is full make a new micro tree
         void recurse_micro(int v)
         {
+            int curr_parent;
             int parent_tree = tree.data[tree.data[v]->parent]->micro_tree;
 
             vec_int_t* micro_tree;
@@ -250,8 +251,8 @@
 
         void calc_rank(int v)
         {
-            rank = tree.data[v]->rank;
-            pwr_of_2 = 1 << (rank + 1);
+            int rank = tree.data[v]->rank;
+            int pwr_of_2 = 1 << (rank + 1);
 
             // Continually check next power of 2 higher
             while (mod_pwr2(tree.data[v]->depth, pwr_of_2) == 0 && tree.data[v]->size >= pwr_of_2)
@@ -266,6 +267,8 @@
 
         void calculate_jumpM()
         {
+            int curr_parent;
+
             // Make sure to reset 'used' since when we recalculate jumpM we will want to restart at index 0
             jumpM.length = 0;
 
@@ -398,8 +401,8 @@
         {
             Node* new_node = tree.data[leaf];
 
-            new_node.size = 1;
-            new_node.rank = 0;
+            new_node->size = 1;
+            new_node->rank = 0;
 
             int curr_parent = parent;
 
@@ -416,7 +419,6 @@
             {
 
                 r0 = (int)floor(log_base2(log_base2(tree.length)) - 1);
-                //next_r0_threshold = r0 * r0 * r0 * r0;
 
                 M = (1 << r0);
 

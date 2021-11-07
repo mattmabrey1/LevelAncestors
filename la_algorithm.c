@@ -33,6 +33,12 @@ void la_initialize(){
 
             K = 5;
             max_depth = -1;
+        #elif LA_ALGORITHM == ALSTRUP
+
+            r0 = 0;
+            M = 0;
+            N = 0;
+            max_depth = 0;
         #endif
 
     #elif LA_ALGORITHM == DYNAMIC

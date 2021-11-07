@@ -12,10 +12,6 @@
 
   int r0 = 0, M = 0, N = 0, max_depth = 0;
 
-  int curr_parent, pwr_of_2 = 1, rank = 0;
-
-  int next_r0_threshold;
-
   node_vec_t tree;
 
   vec_int_t jumpM;
