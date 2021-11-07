@@ -400,6 +400,7 @@
         void add_alstrup_leaf(int parent, int leaf, bool is_left_child)
         {
             node* new_node = tree.data[leaf];
+            noe* parent_node = tree.data[parent];
 
             new_node->size = 1;
             new_node->rank = 0;
@@ -440,11 +441,11 @@
 
                 if (mod_pwr2(parent_node->depth, M) == 0)
                 {
-                    vec_push(&jumpM, p);
+                    vec_push(&jumpM, parent);
                 }
                 else
                 {
-                    vec_push(&jumpM, jumpM.data[p]);
+                    vec_push(&jumpM, jumpM.data[parent]);
                 }
 
                 recurse_micro(v);
