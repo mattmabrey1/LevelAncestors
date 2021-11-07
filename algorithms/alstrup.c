@@ -399,7 +399,7 @@
         /************************************************************************/
         void add_alstrup_leaf(int parent, int leaf, bool is_left_child)
         {
-            Node* new_node = tree.data[leaf];
+            node* new_node = tree.data[leaf];
 
             new_node->size = 1;
             new_node->rank = 0;
