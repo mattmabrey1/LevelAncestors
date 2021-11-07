@@ -448,7 +448,7 @@
                     vec_push(&jumpM, jumpM.data[parent]);
                 }
 
-                recurse_micro(v);
+                recurse_micro(leaf);
             }
 
             int floored_log_arr_size = (int)floor(log_base2(tree.length) / 2);
