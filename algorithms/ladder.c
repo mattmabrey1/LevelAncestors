@@ -196,7 +196,6 @@
           }
         }
       }
-
       if (DEBUG_LADDER)
       {
         printf("Height: ");
