@@ -75,6 +75,8 @@ void la_preprocessing(){
         menghani_matani_preprocessing();
     #elif LA_ALGORITHM == HAGERUP
         hagerup_preprocessing();
+    #elif LA_ALGORITHM == ALSTRUP
+        alstrup_preprocessing();
     #endif
 }
 
@@ -104,6 +106,8 @@ void la_process_queries(){
             query_answer = menghani_matani_query(query_node, query_level);
         #elif LA_ALGORITHM == HAGERUP
             query_answer = hagerup_query(query_node, query_level);
+        #elif LA_ALGORITHM == ALSTRUP
+            query_answer = alstrup_query(query_node, query_level);
         #endif
 
         #if DEBUG_RESULTS
@@ -130,7 +134,9 @@ int la_query(int query_node, int query_level){
         return menghani_matani_query(query_node, query_level);
     #elif LA_ALGORITHM == HAGERUP
         return hagerup_query(query_node, query_level);
-    #endif
+    #elif LA_ALGORITHM == ALSTRUP
+        return alstrup_query(query_node, query_level);
+     #endif
 }
 
 void validate_query_answer(int query_node, int query_answer){
@@ -224,6 +230,8 @@ void validate_query_answer(int query_node, int query_answer){
             add_menghani_matani_leaf(parent, leaf, is_left_child);
         #elif LA_ALGORITHM == HAGERUP
             add_hagerup_leaf(parent, leaf, is_left_child);
+        #elif LA_ALGORITHM == ALSTRUP
+            add_alstrup_leaf(parent, leaf, is_left_child);
         #endif
     }   
 

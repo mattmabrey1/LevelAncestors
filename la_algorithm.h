@@ -5,6 +5,8 @@
 #define MACRO_MICRO 5
 #define MENGHANI_MATANI 6
 #define HAGERUP 7
+#define BENAMRAM 8
+#define ALSTRUP 9
 
 // In case compilation doesn't define preprocessing directive LA_ALGORITHM to determine the algorithm
 #ifndef LA_ALGORITHM
@@ -21,14 +23,18 @@
 
 struct node_struct
 {
-    unsigned int parent;
-    unsigned int left, right;	/* Children pointers	*/
-    unsigned int depth;
+    int parent;
+    int left, right;	/* Children pointers	*/
+    int depth;
 
     #if LA_ALGORITHM == DYNAMIC
-    
-    unsigned int leaf_pos;
-    
+    int leaf_pos;
+    #endif
+
+    #if LA_ALGORITHM == ALSTRUP
+    int size;
+    int rank;
+    int micro_tree;
     #endif
 };
 typedef struct node_struct node;
