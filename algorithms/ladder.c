@@ -297,21 +297,21 @@
       int i, j;
       int mydiff, myladder, mypos;
 
-      mydiff = tree.data[q_node]->depth - q_level;
+      mydiff = tree.data[query_node]->depth - query_level;
 
       if (mydiff < 0) return -1;
-      if (mydiff == 0) return q_node;
+      if (mydiff == 0) return query_node;
 
-      myladder = ladder_index[q_node].no;
-      mypos = ladder_index[q_node].pos;
+      myladder = ladder_index[query_node].no;
+      mypos = ladder_index[query_node].pos;
 
-      if (tree.data[ladder_table.data[myladder]->data[0]]->depth <= q_level)
+      if (tree.data[ladder_table.data[myladder]->data[0]]->depth <= query_level)
       {
           return ladder_table.data[myladder]->data[mypos - mydiff];
       }
       else
       {
-          return ladder_query(ladder_table.data[myladder]->data[0], q_level);
+          return ladder_query(ladder_table.data[myladder]->data[0], query_level);
       }
     }
     /************************************************************************/
@@ -326,9 +326,9 @@
           int parent_ladder = ladder_index[parent].no;
 
           ladder_index[leaf].no = parent_ladder;
-          ladder_index[leaf].pos = ladder_table->arrays[parent_ladder]->used;
+          ladder_index[leaf].pos = ladder_table.data[parent_ladder]->length;
 
-          push(ladder_table->arrays[parent_ladder], leaf);
+          vec_push(ladder_table.data[parent_ladder], leaf);
       }
       else
       {
