@@ -69,6 +69,8 @@ typedef struct node_struct node;
         #include "algorithms/menghani_matani.h"
     #elif LA_ALGORITHM == HAGERUP
         #include "algorithms/hagerup.h"
+    #elif LA_ALGORITHM == ALSTRUP
+        #include "algorithms/alstrup.h"
     #endif
 
     /************************************************************************/
