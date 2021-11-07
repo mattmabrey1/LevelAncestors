@@ -400,7 +400,7 @@
         void add_alstrup_leaf(int parent, int leaf, bool is_left_child)
         {
             node* new_node = tree.data[leaf];
-            noe* parent_node = tree.data[parent];
+            node* parent_node = tree.data[parent];
 
             new_node->size = 1;
             new_node->rank = 0;
