@@ -1,5 +1,18 @@
 #include "la_algorithm.h"
 
+void init_node(node* node){
+
+    node->parent = node->left = node->right = node->depth = -1;
+
+    #if LA_ALGORITHM == DYNAMIC
+        node->leaf_pos = -1;
+    #endif
+
+    #if LA_ALGORITHM == ALSTRUP
+        node->size = node->rank = node->micro_tree = -1;
+    #endif
+}
+
 void la_initialize(){
 
     int i;
@@ -9,7 +22,7 @@ void la_initialize(){
         tree = alloc(n*(sizeof(node)));
 
         for (i = 0; i < n; i++){
-            tree[i].parent = tree[i].left = tree[i].right = -1;
+            init_node(&tree[i]);
         }
 
         tree[0].depth = 0;
@@ -33,12 +46,6 @@ void la_initialize(){
 
             K = 5;
             max_depth = -1;
-        #elif LA_ALGORITHM == ALSTRUP
-
-            r0 = 0;
-            M = 0;
-            N = 0;
-            max_depth = 0;
         #endif
 
     #elif LA_ALGORITHM == DYNAMIC
@@ -57,10 +64,19 @@ void la_initialize(){
         {
             new_node = alloc(sizeof(node));
             vec_push(&tree, new_node);
-            new_node->parent = new_node->left = new_node->right = new_node->depth = new_node->leaf_pos = -1;
+            init_node(new_node);
         }
 
         tree.data[0]->depth = tree.data[0]->leaf_pos = 0;
+
+        #if LA_ALGORITHM == ALSTRUP
+
+            r0 = (int)floor(log_base2(log_base2(n)) - 1);
+            M = (1 << r0);
+            N = 0;
+
+            tree.data[0]->micro_tree = 0;
+        #endif 
     #endif
 }
 
@@ -190,9 +206,8 @@ void validate_query_answer(int query_node, int query_answer){
         node* parent_node = tree.data[parent];
         node* leaf_node = alloc(sizeof(node));
 
+        init_node(leaf_node);
         vec_push(&tree, leaf_node);
-
-        leaf_node->parent = leaf_node->left = leaf_node->right = leaf_node->depth = leaf_node->leaf_pos = -1;
 
         int leaf = tree.length - 1;
 
@@ -243,12 +258,12 @@ void validate_query_answer(int query_node, int query_answer){
 
     void la_process_leaf_additions(){
 
-        int i, parent;
+        int parent;
         char c;
 
-        for (i = 0; i < query_num; i++)
+        for (int i = 0; i < 100000; i++)
         {
-            parent = 0;
+            parent = leaves.data[rand() % leaves.length];
 
             add_leaf(parent);
         }

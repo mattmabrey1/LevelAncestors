@@ -7,10 +7,10 @@
 /* Alstrup-Holm Algo Data Structures					*/
 /************************************************************************/
 
+int r0, M, N;
+
 #if LA_ALGORITHM == DYNAMIC
   // Dynamic data structures
-
-  int r0 = 0, M = 0, N = 0, max_depth = 0;
 
   node_vec_t tree;
 

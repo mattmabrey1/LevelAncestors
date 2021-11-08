@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
     int current_pos, parent_pos, current_depth;
     char c;
 
-    clock_gettime(CLOCK_REALTIME, &start_proc);
+    clock_gettime(CLOCK_REALTIME, &start_time);
     
     /************************************************************************/
     /* Process input and create tree					*/
@@ -142,26 +142,28 @@ int main(int argc, char *argv[])
     /************************************************************************/
     la_preprocessing();
 
-    clock_gettime(CLOCK_REALTIME, &end_proc);
-    clock_gettime(CLOCK_REALTIME, &start_query);
-
-    la_process_queries();
-
-    clock_gettime(CLOCK_REALTIME, &end_query);
-    
-    long proc_seconds = end_proc.tv_sec - start_proc.tv_sec;
-    long proc_nanoseconds = end_proc.tv_nsec - start_proc.tv_nsec;
-    double preprocessing_time = proc_seconds + (proc_nanoseconds * 0.000000001);
-
-    long query_seconds = end_query.tv_sec - start_query.tv_sec;
-    long query_nanoseconds = end_query.tv_nsec - start_query.tv_nsec;
-    double query_time = query_seconds + (query_nanoseconds * 0.000000001);
+    clock_gettime(CLOCK_REALTIME, &end_time);
 
     #if DEBUG_RESULTS
         printf("\n\t[DEBUG RESULTS MODE ENABLED]");
     #endif
 
     printf("\n\t---Algorithm %d---\n", LA_ALGORITHM);
-    printf("\tPreprocessing Time: %f seconds\n", preprocessing_time);
-    printf("\tQuery Time: %f seconds\n\n", query_time);
+    printf("\tPreprocessing Time: %f seconds\n", get_elapsed_time(start_time, end_time));
+    
+    clock_gettime(CLOCK_REALTIME, &start_time);
+    la_process_queries();
+    clock_gettime(CLOCK_REALTIME, &end_time);
+    
+    printf("\tQuery Time: %f seconds\n", get_elapsed_time(start_time, end_time));
+
+    #if LA_ALGORITHM == DYNAMIC
+        clock_gettime(CLOCK_REALTIME, &start_time);
+        la_process_leaf_additions();
+        clock_gettime(CLOCK_REALTIME, &end_time);
+
+        printf("\tLeaf Addition Time: %f seconds\n", get_elapsed_time(start_time, end_time));
+    #endif
+
+    printf("\n");
 }

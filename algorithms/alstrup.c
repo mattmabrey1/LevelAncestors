@@ -62,8 +62,6 @@
         /************************************************************************/
         void alstrup_preprocessing()
         {
-            int i, j;
-
             if (calc_subtree(0) != tree.capacity)
             {
                 printf("Root subtree size (%d) not equal to n = %d!", calc_subtree(0), tree.capacity);
@@ -71,7 +69,7 @@
             }
 
             // CALCULATE RANK FOR EACH NODE
-            for (i = 0; i < tree.length; ++i)
+            for (int i = 0; i < tree.length; ++i)
             {
                 calc_rank(i);
             }
@@ -104,12 +102,8 @@
 
             vec_init(&bitindex);
             
-            i = (1 << N);
-            
-            printf("tree.len: %d N: %d  M: %d  i: %d\n", tree.length, N, M,  i);
-            
-            if(i > bitindex.capacity){
-                vec_reserve(&bitindex, i);
+            if((1 << N) > bitindex.capacity){
+                vec_reserve(&bitindex, (1 << N));
             }
             
             build_bitindex(N);
@@ -147,8 +141,9 @@
                     j = vec_last(bitindex_row) - 1;
 
                     // convert it to a power of 2 for mask
-                    if (j >= 0)
+                    if (j >= 0){
                         nMaskTmp = 1 << j;
+                    }
                 }
 
                 // Start at the MSB that has not been checked yet and loop until 0
@@ -176,8 +171,12 @@
         // Do a top-down DFS of the tree T to create micro trees. Try to add node V to it's parent's micro tree, if it is full make a new micro tree
         void recurse_micro(int v)
         {
-            int curr_parent;
+            int parent = tree.data[v]->parent;
             int parent_tree = tree.data[tree.data[v]->parent]->micro_tree;
+
+            if(parent == 152){
+                printf("3.2.2.1    parent_tree: %d   node_table len: %d\n", parent_tree, node_table.length);
+            }
 
             vec_int_t* micro_tree;
 
@@ -198,11 +197,12 @@
 
                 vec_push(&levelancM, lvlanc);
 
-                parent_tree = node_table.length - 1;
+                tree.data[v]->micro_tree = node_table.length - 1;
 
-                anc.data[v] = 1;
+                // anc.data[v] = 1;
+                vec_push(&anc, 1);
 
-                curr_parent = v;
+                int curr_parent = v;
 
                 // Fill each micro tree root's levelancM array with M of it's ancestors
                 for (int i = 0; i < M; i++)
@@ -219,20 +219,20 @@
             else
             {
                 micro_tree = node_table.data[parent_tree];
-                anc.data[v] = (1 << (micro_tree->length)) + anc.data[tree.data[v]->parent];
+                tree.data[v]->micro_tree = parent_tree;
+
+                vec_push(&anc, (1 << (micro_tree->length)) + anc.data[tree.data[v]->parent]);
             }
-
-            anc.length++;	// possibly just change to anc.push(value) so we dont need to increment length
-
-            tree.data[v]->micro_tree = parent_tree;
 
             vec_push(micro_tree, v);
 
-            if (tree.data[v]->left != -1)
+            if (tree.data[v]->left != -1){
                 recurse_micro(tree.data[v]->left);
-
-            if (tree.data[v]->right != -1)
+            }
+                
+            if (tree.data[v]->right != -1){
                 recurse_micro(tree.data[v]->right);
+            }
         }
 
         // Calculate the subtree sizes for all nodes by doing a top-down DFS and returning subtree size at each node
@@ -240,11 +240,13 @@
         {
             int num_children = 0;
 
-            if (tree.data[v]->left != -1)
+            if (tree.data[v]->left != -1){
                 num_children = calc_subtree(tree.data[v]->left);
+            }
 
-            if (tree.data[v]->right != -1)
+            if (tree.data[v]->right != -1){
                 num_children += calc_subtree(tree.data[v]->right);
+            }
 
             return (tree.data[v]->size = ++num_children);
         }
@@ -277,7 +279,6 @@
 
             for (int v = 1; v < tree.length; v++)
             {
-
                 curr_parent = tree.data[v]->parent;
 
                 while (curr_parent >= 0)
@@ -352,7 +353,6 @@
             // Now w is the first macro node on the path from v to root
             if (tree.data[w]->depth >= d)
             {
-
                 v = viable_macro = w;
 
                 curr_jump = jumpM.data[v];
@@ -360,12 +360,14 @@
                 while (tree.data[curr_jump]->depth >= d)
                 {
 
-                    if (tree.data[curr_jump]->rank >= r0)
+                    if (tree.data[curr_jump]->rank >= r0){
                         viable_macro = curr_jump;
-
-                    if (curr_jump == 0)
+                    }
+                        
+                    if (curr_jump == 0){
                         break;
-
+                    }
+                        
                     curr_jump = jumpM.data[curr_jump];
                 }
 
@@ -418,7 +420,6 @@
             // M has increased, change jumpM and micro trees
             if (r0 < (int)floor(log_base2(log_base2(tree.length)) - 1))
             {
-
                 r0 = (int)floor(log_base2(log_base2(tree.length)) - 1);
 
                 M = (1 << r0);
@@ -429,12 +430,13 @@
                 // when we don't care about the old data inside
                 for (int i = 0; i < node_table.length; i++)
                 {
-                    vec_deinit(node_table.data[i]);
-                    vec_deinit(levelancM.data[i]);
+                    vec_clear(node_table.data[i]);
+                    vec_clear(levelancM.data[i]);
                 }
 
                 calculate_jumpM();
-                init_micro();
+                recurse_micro(tree.data[0]->left);
+                recurse_micro(tree.data[0]->right);
             }
             else
             {
@@ -455,7 +457,6 @@
 
             if (N < floored_log_arr_size)
             {
-
                 N = floored_log_arr_size;
                 printf("New N = %d\n", N);
 

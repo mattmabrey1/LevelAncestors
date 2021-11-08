@@ -76,7 +76,6 @@ typedef struct node_struct node;
     /************************************************************************/
     /* Function Prototypes						*/
     /************************************************************************/
-
     void la_preprocessing();
 
     void la_process_queries();
