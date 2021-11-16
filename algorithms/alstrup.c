@@ -174,10 +174,6 @@
             int parent = tree.data[v]->parent;
             int parent_tree = tree.data[tree.data[v]->parent]->micro_tree;
 
-            if(parent == 152){
-                printf("3.2.2.1    parent_tree: %d   node_table len: %d\n", parent_tree, node_table.length);
-            }
-
             vec_int_t* micro_tree;
 
             if (node_table.data[parent_tree]->length >= M)

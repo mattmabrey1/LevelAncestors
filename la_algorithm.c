@@ -95,6 +95,7 @@ void la_initialize(){
 
             tree.data[0]->micro_tree = 0;
         #endif 
+
     #endif
 }
 
