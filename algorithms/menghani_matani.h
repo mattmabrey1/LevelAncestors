@@ -30,6 +30,21 @@
     
 #else
     // Dynamic data structures
+
+    vec_int_t depth_count;           // A vector to keep track of how full each subarray is in the 2D depth_arr
+
+    vec_int_t depth_size;            // A vector of the total number of nodes at each given tree depth level
+    vec_int_t depth_meta_size;       // A vector of the total number of nodes for each depth's meta array
+
+    vec_vec_t depth_arr;            // A 2D vector of each tree depth level and all nodes at that depth in ascending label value
+
+    vec_vec_t depth_metaarray_val;  // A 2D meta vector to speed up binary search for very large vectors by tracking every ceil(sqrt(depth_size[d])) node's value
+    vec_vec_t depth_metaarray_pos;  // A 2D meta vector to speed up binary search for very large vectors by tracking every ceil(sqrt(depth_size[d])) node's position in depth_arr
+
+    vec_int_t new_labels; 
+    
+    int num_of_unlabeled_nodes;
+    int unlabeled_nodes_threshold;
 #endif
 /************************************************************************/
 

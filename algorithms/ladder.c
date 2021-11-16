@@ -55,7 +55,7 @@
       
       ladder_table = alloc(ladders_num*sizeof(int*));
       ladder_roots = alloc(ladders_num*sizeof(int*));
-      ladder_index = alloc(n*sizeof(struct ladder_index_node));
+      ladder_index = alloc(n * sizeof(struct ladder_index_node));
       ladder_roots[0] = 0;
       new_ladder_root = 1;
       current_ladder = 0;
@@ -196,7 +196,7 @@
           }
         }
       }
-      
+
       if (DEBUG_LADDER)
       {
         printf("Height: ");
@@ -207,8 +207,14 @@
       
       vec_init(&ladder_table);
       vec_reserve(&ladder_table, ladders_num);
+
       ladder_roots = alloc(ladders_num*sizeof(int*));
-      ladder_index = alloc(n*sizeof(struct ladder_index_node));
+
+      vec_init(&ladder_index_no);
+      vec_reserve(&ladder_index_no, n);
+      vec_init(&ladder_index_pos);
+      vec_reserve(&ladder_index_pos, n);
+
       ladder_roots[0] = 0;
       new_ladder_root = 1;
       current_ladder = 0;
@@ -229,20 +235,21 @@
           ladder_size = height[current_ladder_root] + tree.data[current_ladder_root]->depth;
           upwards_extension = tree.data[current_ladder_root]->depth-1;
         }
-
+        
         vec_int_t* ladder = alloc(sizeof(vec_int_t));
         vec_init(ladder);
         vec_reserve(ladder, ladder_size);
 
-        ladder->length = ladder_size;
+        vec_push(&ladder_table, ladder);
 
         current_node = current_ladder_root;
 
         for(i = 0; i < height[current_ladder_root]; i++)
         {
-          ladder_table.data[current_ladder]->data[ladder_pos+i] = current_node;
-          ladder_index[current_node].no = current_ladder;
-          ladder_index[current_node].pos = ladder_pos+i;
+          vec_insert(ladder, ladder_pos + i, current_node);
+
+          vec_insert(&ladder_index_no, current_node, current_ladder);
+          vec_insert(&ladder_index_pos, current_node, ladder_pos + i);
 
           if (tree.data[current_node]->right != -1)
           {
@@ -262,12 +269,13 @@
             current_node = tree.data[current_node]->left;
           }
         } 
-
+        
         current_node = current_ladder_root;
 
         for(i = upwards_extension; i >= 0; i--)
         {
-          ladder_table.data[current_ladder]->data[i] = tree.data[current_node]->parent;
+          vec_insert(ladder, i, tree.data[current_node]->parent);
+
           current_node = tree.data[current_node]->parent;
         }
 
@@ -302,8 +310,8 @@
       if (mydiff < 0) return -1;
       if (mydiff == 0) return query_node;
 
-      myladder = ladder_index[query_node].no;
-      mypos = ladder_index[query_node].pos;
+      myladder = ladder_index_no.data[query_node];
+      mypos = ladder_index_pos.data[query_node];
 
       if (tree.data[ladder_table.data[myladder]->data[0]]->depth <= query_level)
       {
@@ -321,24 +329,23 @@
     /************************************************************************/
     void add_ladder_leaf(int parent, int leaf, bool is_left_child){
       
+      int parent_ladder = ladder_index_no.data[parent];
+
       if (is_left_child) 
       {
-          int parent_ladder = ladder_index[parent].no;
-
-          ladder_index[leaf].no = parent_ladder;
-          ladder_index[leaf].pos = ladder_table.data[parent_ladder]->length;
+          vec_insert(&ladder_index_no, leaf, parent_ladder);
+          vec_insert(&ladder_index_pos, leaf, ladder_table.data[parent_ladder]->length);
 
           vec_push(ladder_table.data[parent_ladder], leaf);
       }
       else
       {
-          int parent_ladder = ladder_index[parent].no;
           vec_int_t* new_ladder = alloc(sizeof(vec_int_t));
           vec_push(new_ladder, parent);
           vec_push(new_ladder, leaf);
           
-          ladder_index[leaf].no = ladder_table.length;
-          ladder_index[leaf].pos = 1;
+          vec_insert(&ladder_index_no, leaf, ladder_table.length);
+          vec_insert(&ladder_index_pos, leaf, 1);
 
           vec_push(&ladder_table, new_ladder);
       }

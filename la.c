@@ -58,6 +58,18 @@ int main(int argc, char *argv[])
                 tree.data[++current_pos]->parent = parent_pos;
                 tree.data[current_pos]->depth = ++current_depth;
 
+                #if LA_ALGORITHM == MENGHANI_MATANI
+                
+                    if(depth_size.length > current_depth){
+                        depth_size.data[current_depth]++;
+                    }
+                    else{
+                        vec_push(&depth_size, 1);
+                    }
+
+                    tree.data[current_pos]->label = current_pos;
+                #endif
+
                 if (tree.data[parent_pos]->left == -1)
                 {
                     tree.data[parent_pos]->left = current_pos;

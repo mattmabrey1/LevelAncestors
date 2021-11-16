@@ -20,6 +20,8 @@ unsigned int *ladder_roots;
 #else
   // Dynamic data structures
   vec_vec_t ladder_table;
+  vec_int_t ladder_index_no;
+  vec_int_t ladder_index_pos;
 #endif
 /************************************************************************/
 

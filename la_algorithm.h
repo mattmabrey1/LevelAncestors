@@ -27,15 +27,17 @@ struct node_struct
     int left, right;	/* Children pointers	*/
     int depth;
 
-    #if LA_ALGORITHM == DYNAMIC
+#if LA_ALGORITHM == DYNAMIC
     int leaf_pos;
-    #endif
+#endif
 
-    #if LA_ALGORITHM == ALSTRUP
+#if LA_ALGORITHM == MENGHANI_MATANI
+    int label;
+#elif LA_ALGORITHM == ALSTRUP
     int size;
     int rank;
     int micro_tree;
-    #endif
+#endif
 };
 typedef struct node_struct node;
 
@@ -94,7 +96,6 @@ typedef struct node_struct node;
     /************************************************************************/
     /* Tree Data Structures							*/
     /************************************************************************/
-    
 
     unsigned int n;		/* The number of nodes in the tree			*/
 
