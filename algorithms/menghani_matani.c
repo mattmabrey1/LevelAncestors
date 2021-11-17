@@ -356,10 +356,6 @@
     /* Tree Manipulation						*/
     /************************************************************************/
     void add_menghani_matani_leaf(int parent, int leaf, bool is_left_child){
-      printf("Error: Function Not Yet Implemented!\n");
-      exit(-1);
-
-      // Keep label -1
 
       num_of_unlabeled_nodes++;
 
@@ -375,13 +371,8 @@
         }
         
         vec_deinit(&new_labels);
-        // recompute_depth_arr's
-
         // recompute_depth_meta
       }
-      // Increment count of -1 label children
-        // If > size / 2, readjust the whole tree
-
       // Keep pointer to most recent labeled ancestor
 
       // Either jump to pointer or walk up for query answer
@@ -395,9 +386,7 @@
 
       Node* node = tree.data[node_idx];
 
-      // visit
       if(node->label == -1){
-        // insert into depth arr
         vec_push(depth_arr.data[node->depth], node_idx);
       }
 
@@ -441,22 +430,32 @@
         i--;
       }
 
-      depth_size.data[depth] = curr_depth_arr->length;
-
       if(depth_size.data[depth] > SQRT_SEARCH_MINIMUM){
 
         // reorder meta array
         int meta_size = (int)ceil(sqrt((double)depth_size.data[d]))
 
+        // clear vectors
+        vec_clear(&depth_metaarray_val);
+        vec_clear(&depth_metaarray_pos);
+
+        int last_valid_pos = 0;
+
         for(i = 0; i < meta_size; i++){
 
-          if(curr_depth_arr->data[i * meta_size] != depth_metaarray_val.data[depth]->data[i]){
-            
-            depth_metaarray_val.data[depth]->data[i] = ;
-            depth_metaarray_pos.data[depth]->data[i] = i * meta_size;
+          if(i * meta_size >= curr_depth_arr->length){
+            last_valid_pos++;
           }
+          else{
+            last_valid_pos = i * meta_size;
+          }
+          
+          vec_push(&depth_metaarray_val, curr_depth_arr->data[last_valid_pos]);
+          vec_push(&depth_metaarray_pos, last_valid_pos);
         }
       }
+
+      depth_size.data[depth] = curr_depth_arr->length;
     }
 
     void remove_menghani_matani_leaf(int leaf){
