@@ -473,6 +473,12 @@
         vec_clear(depth_metaarray_pos.data[depth]);
         int position = -1;
 
+        // clear vectors
+        vec_clear(&depth_metaarray_val);
+        vec_clear(&depth_metaarray_pos);
+
+        int last_valid_pos = 0;
+
         for(i = 0; i < meta_size; i++){
 
           // If arr size is not exactly a power of 'meta_size' add last elements
