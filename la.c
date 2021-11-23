@@ -14,6 +14,23 @@ int main(int argc, char *argv[])
 
     scanf("%d\n", &n);
 
+    if (argc != 2)
+    {
+        printf("\nUsage: ./<algorithm> <number_of_la_operations> <seed (default = 1)> < <tree>\n\n");
+        printf("The tree is read from the standard input.\n\n");
+        exit(0);
+    }
+
+    la_operations = atoi(argv[1]);
+
+    // Set random number generator seed
+    if (argc == 3){
+        srand(atoi(argv[2]));
+    }
+    else{
+        srand(1);
+    }
+
     current_pos = 0;
     parent_pos = 0;
     current_depth = 0;
@@ -39,18 +56,15 @@ int main(int argc, char *argv[])
                     tree[parent_pos].left = current_pos;
                     if (DEBUG_INPUT) printf("tree[%d].left = %d\n", parent_pos, current_pos);
                 }
+                else if (tree[parent_pos].right == -1)
+                {
+                    tree[parent_pos].right = current_pos;
+                    if (DEBUG_INPUT) printf("tree[%d].right = %d\n", parent_pos, current_pos);
+                }
                 else
                 {
-                    if (tree[parent_pos].right == -1)
-                    {
-                        tree[parent_pos].right = current_pos;
-                        if (DEBUG_INPUT) printf("tree[%d].right = %d\n", parent_pos, current_pos);
-                    }
-                    else
-                    {
-                        printf("Illegal input: Input tree is not binary\n");
-                        exit(-1);
-                    }
+                    printf("Illegal input: Input tree is not binary\n");
+                    exit(-1);
                 }
 
             #elif LA_ALGORITHM == DYNAMIC
@@ -60,11 +74,11 @@ int main(int argc, char *argv[])
 
                 #if LA_ALGORITHM == MENGHANI_MATANI
                 
-                    if(depth_size.length > current_depth){
-                        depth_size.data[current_depth]++;
+                    if(current_depth >= depth_size.length){
+                        vec_push(&depth_size, 1);
                     }
                     else{
-                        vec_push(&depth_size, 1);
+                        depth_size.data[current_depth]++;
                     }
 
                     tree.data[current_pos]->label = current_pos;
@@ -80,33 +94,29 @@ int main(int argc, char *argv[])
                         printf("tree.data[%d]->left = %d\n", parent_pos, current_pos);
                     }
                 }
+                else if (tree.data[parent_pos]->right == -1)
+                {
+                    tree.data[parent_pos]->right = current_pos;
+
+                    leaves.data[tree.data[parent_pos]->leaf_pos] = current_pos;
+                    tree.data[current_pos]->leaf_pos = tree.data[parent_pos]->leaf_pos;
+                    tree.data[parent_pos]->leaf_pos = -1;
+
+                    if (DEBUG_INPUT)
+                    {
+                        printf("tree.data[%d]->right = %d\n", parent_pos, current_pos);
+                    }
+                }
                 else
                 {
-                    if (tree.data[parent_pos]->right == -1)
-                    {
-                        tree.data[parent_pos]->right = current_pos;
-
-                        leaves.data[tree.data[parent_pos]->leaf_pos] = current_pos;
-                        tree.data[current_pos]->leaf_pos = tree.data[parent_pos]->leaf_pos;
-                        tree.data[parent_pos]->leaf_pos = -1;
-
-                        if (DEBUG_INPUT)
-                        {
-                            printf("tree.data[%d]->right = %d\n", parent_pos, current_pos);
-                        }
-                    }
-                    else
-                    {
-                        printf("Illegal input: Input tree is not binary\n");
-                        exit(-1);
-                    }
+                    printf("Illegal input: Input tree is not binary\n");
+                    exit(-1);
                 }
 
             
             #endif
             
             parent_pos = current_pos;
-        
         }
         else if (c == '0')
         {
@@ -162,19 +172,16 @@ int main(int argc, char *argv[])
 
     printf("\n\t---Algorithm %d---\n", LA_ALGORITHM);
     printf("\tPreprocessing Time: %f seconds\n", get_elapsed_time(start_time, end_time));
-    
+
     clock_gettime(CLOCK_REALTIME, &start_time);
-    la_process_queries();
+    la_execute();
     clock_gettime(CLOCK_REALTIME, &end_time);
     
-    printf("\tQuery Time: %f seconds\n", get_elapsed_time(start_time, end_time));
+    printf("\tExecution Time: %f seconds\n", get_elapsed_time(start_time, end_time));
 
     #if LA_ALGORITHM == DYNAMIC
-        clock_gettime(CLOCK_REALTIME, &start_time);
-        la_process_leaf_additions();
-        clock_gettime(CLOCK_REALTIME, &end_time);
-
-        printf("\tLeaf Addition Time: %f seconds\n", get_elapsed_time(start_time, end_time));
+        printf("\tQueries: %d  %f%%\n", num_of_queries, ((float)num_of_queries / la_operations));
+        printf("\tLeaf Additions: %d  %f%%\n", num_of_leaf_additions, ((float)num_of_leaf_additions / la_operations));
     #endif
 
     printf("\n");

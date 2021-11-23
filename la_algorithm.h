@@ -80,29 +80,29 @@ typedef struct node_struct node;
     /************************************************************************/
     void la_preprocessing();
 
-    void la_process_queries();
-
     void la_initialize();
+
+    void la_execute();
     
     int la_query(int query_node, int query_level);
 
     void validate_query_answer(int query_node, int query_answer);
 
     void add_leaf(int parent);
-
-    void la_process_leaf_additions();
     /************************************************************************/
 
     /************************************************************************/
     /* Tree Data Structures							*/
     /************************************************************************/
 
-    unsigned int n;		/* The number of nodes in the tree			*/
+    unsigned int n;		                        /* The number of nodes in the tree			                                */
 
     #if LA_ALGORITHM == STATIC
-        node *tree;	/* Our tree, which will be also an array of nodes	*/
+        node *tree;	                            /* Our tree, which will be also an array of nodes	*/
     #else 
         node_vec_t tree;
         vec_int_t leaves;
+
+        int num_of_queries, num_of_leaf_additions;  /* The number of queries and leaf additions exectued over the program		*/
     #endif
 #endif

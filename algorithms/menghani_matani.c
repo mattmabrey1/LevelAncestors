@@ -184,6 +184,8 @@
         vec_init(&depth_arr);
         vec_reserve(&depth_arr, depth_size.length);
 
+        vec_reserve(&depth_meta_size, depth_size.length);
+
         vec_init(&depth_metaarray_val);
         vec_reserve(&depth_metaarray_val, depth_size.length);
 
@@ -192,7 +194,7 @@
 
         int d, meta_pos, meta_spaces_left, remaining_nodes;
 
-        // Allocate all of the depth arrays so there is no wasted space
+        // Allocate all of the depth arrays
         for(d = 0; d < n; d++){
             
             if(depth_size.data[d] < 1) break;
@@ -203,15 +205,15 @@
             vec_reserve(depth_arr.data[d], depth_size.data[d]);
 
             if(depth_size.data[d] >= SQRT_SEARCH_MINIMUM){
+              
+              depth_meta_size.data[d] = (int)ceil(sqrt((double)depth_size.data[d]));
 
-              vec_insert(&depth_meta_size, d, (int)ceil(sqrt((double)depth_size.data[d])));
-
-              vec_push(&depth_metaarray_val, alloc(sizeof(vec_int_t)));
+              depth_metaarray_val.data[d] = alloc(sizeof(vec_int_t));
 
               vec_init(depth_metaarray_val.data[d]);
               vec_reserve(depth_metaarray_val.data[d], depth_meta_size.data[d]);
 
-              vec_push(&depth_metaarray_pos, alloc(sizeof(vec_int_t)));
+              depth_metaarray_pos.data[d] = alloc(sizeof(vec_int_t));
 
               vec_init(depth_metaarray_pos.data[d]);
               vec_reserve(depth_metaarray_pos.data[d], depth_meta_size.data[d]);
@@ -262,7 +264,7 @@
 
     // Meta binary search figures out a general idea of where to start the binary search.
     // Modifies the l and r pointers to indices of a partition of the main depth_arr
-    void meta_binary_search(int d, int* l, int* r, int goal, int max){
+    void meta_binary_search(int d, int* l, int* r, int goal, int max_idx){
 
       if (*r >= *l) { 
 
@@ -276,9 +278,9 @@
             return;
           }
       
-          if ((max < 0 || label > tree.data[max]->label)
+          if ((max_idx < 0 || label > tree.data[depth_metaarray_val.data[d]->data[max_idx]]->label)
           && label < goal){
-            max = depth_metaarray_val.data[d]->data[mid];
+            max_idx = mid;
           }
           
           if (label > goal){
@@ -288,20 +290,22 @@
             *l = mid + 1;
           }  
           
-          meta_binary_search(d, l, r, goal, max); 
+          meta_binary_search(d, l, r, goal, max_idx); 
       } 
       else{
           // Set the left and right pointers to the position of node with the max value less than the goal value
-          *l = *r = depth_metaarray_pos.data[d]->data[max];
+          *l = *r = depth_metaarray_pos.data[d]->data[max_idx];
 
           // If this value isn't the last value in the meta array, 
           // then set the right pointer so we only binary search a partition of the main depth_arr
-          if(max + 1 < depth_metaarray_pos.data[d]->capacity) *r = depth_metaarray_pos.data[d]->data[max + 1];
+          if(max_idx + 1 < depth_metaarray_pos.data[d]->length){
+            *r = depth_metaarray_pos.data[d]->data[max_idx + 1];
+          } 
       }
     }
 
     // Binary search looking for the goal value or the greatest value less than the goal value
-    int binary_search(int d, int l, int r, int goal, int max){
+    int binary_search(int d, int l, int r, int goal, int max_idx){
 
       if (r >= l) { 
 
@@ -312,29 +316,39 @@
             return depth_arr.data[d]->data[mid];
           }   
     
-          if ((max < 0 || label > tree.data[max]->label) && label < goal){
-            max = depth_arr.data[d]->data[mid];
+          if ((max_idx < 0 || label > tree.data[max_idx]->label) && label < goal){
+            max_idx = depth_arr.data[d]->data[mid];
           }
               
           if (label > goal){
-            return binary_search(d, l, mid - 1, goal, max); 
+            return binary_search(d, l, mid - 1, goal, max_idx); 
           }
     
-          return binary_search(d, mid + 1, r, goal, max); 
+          return binary_search(d, mid + 1, r, goal, max_idx); 
       } 
         
-      return max;
+      return max_idx;
     }
 
     int menghani_matani_query(int query_node, int query_level){
 
-      int l, r;
+      int l, r, query_answer;
 
       if(tree.data[query_node]->depth == query_level){
         query_answer = query_node;
       }
       else{
         
+        // When querying an unlabled node, walk up the branch until a labeled node is found, or the query answer is found 
+        while(tree.data[query_node]->label == -1 && query_node >= 0){
+          
+          query_node = tree.data[query_node]->parent;
+
+          if(tree.data[query_node]->depth == query_level){
+            return query_node;
+          }
+        }
+
         l = 0;
         r = depth_arr.data[query_level]->length - 1;
 
@@ -342,10 +356,10 @@
 
           r = depth_metaarray_val.data[query_level]->length - 1;
 
-          meta_binary_search(query_level, &l, &r, (query_node - 1), -1);
+          meta_binary_search(query_level, &l, &r, (tree.data[query_node]->label - 1), -1);
         }
 
-        query_answer = binary_search(query_level, l, r, (query_node - 1), -1);
+        query_answer = binary_search(query_level, l, r, (tree.data[query_node]->label - 1), -1);
       }
 
       return query_answer;
@@ -359,23 +373,21 @@
 
       num_of_unlabeled_nodes++;
 
+      // readjust whole tree
       if(num_of_unlabeled_nodes >= unlabeled_nodes_threshold){
-        // readjust whole tree
-
+      
         recompute_labels(0, 0);
 
-        vec_init(&new_labels);
+        vec_reserve(&depth_metaarray_val, depth_arr.length);
+        vec_reserve(&depth_metaarray_pos, depth_arr.length);
 
         for(int d = 1; d < depth_arr.length; d++){
           reorder_depth_arr(d);
         }
-        
-        vec_deinit(&new_labels);
-        // recompute_depth_meta
-      }
-      // Keep pointer to most recent labeled ancestor
 
-      // Either jump to pointer or walk up for query answer
+        unlabeled_nodes_threshold = (int)floor(tree.length * 0.5);
+        num_of_unlabeled_nodes = 0;
+      }
     }
 
     int recompute_labels(int node_idx, int label){
@@ -384,74 +396,93 @@
         return label;
       }
 
-      Node* node = tree.data[node_idx];
+      node* node = tree.data[node_idx];
 
       if(node->label == -1){
+
+        if(node->depth >= depth_arr.length){
+
+          vec_int_t* vec = alloc(sizeof(vec_int_t));
+          vec_init(vec);
+          vec_push(&depth_arr, vec);
+        }
+        
         vec_push(depth_arr.data[node->depth], node_idx);
       }
 
-      tree.data[node]->label = label;
-
+      tree.data[node_idx]->label = label;
       label++;
 
-      label = recompute_labels(tree.data[node->left], label);
-      recompute_labels(tree.data[node->right], label);
+      label = recompute_labels(node->left, label);
+      label = recompute_labels(node->right, label);
+
+      return label;
     }
 
     void reorder_depth_arr(int depth){
         
       vec_int_t* curr_depth_arr = depth_arr.data[depth];
 
-      int prev_size = depth_size.data[depth];
-      int i;
+      int i, prev_size;
 
-      if(prev_size == curr_depth_arr->length){
-        return;
+      if(depth >= depth_size.length){
+        vec_push(&depth_size, curr_depth_arr->length);
       }
-      
+
+      prev_size = depth_size.data[depth];
+
       vec_clear(&new_labels);
 
       for (i = prev_size; i < curr_depth_arr->length; i++){
         vec_push(&new_labels, curr_depth_arr->data[i]);
       }
-      
+
       i = prev_size - 1;
 
-      while(new_labels.length > 0 && i >= 0){
+      // Reorder depth array
+      while(new_labels.length > 0){
 
-        if (curr_depth_arr->data[i] > vec_last(&new_labels)){
+        if (i >= 0 && tree.data[curr_depth_arr->data[i]]->label > tree.data[vec_last(&new_labels)]->label){
           curr_depth_arr->data[i + new_labels.length] = curr_depth_arr->data[i];
+          i--;
         }
         else{
           curr_depth_arr->data[i + new_labels.length] = vec_last(&new_labels);
           new_labels.length--;
         }
-        
-        i--;
       }
 
-      if(depth_size.data[depth] > SQRT_SEARCH_MINIMUM){
+      // Reorder meta depth array
+      if(curr_depth_arr->length >= SQRT_SEARCH_MINIMUM){
 
-        // reorder meta array
-        int meta_size = (int)ceil(sqrt((double)depth_size.data[d]))
+        int meta_size = (int)ceil(sqrt((double)curr_depth_arr->length));
 
+        if(depth_metaarray_val.data[depth] == NULL){
+          depth_metaarray_val.data[depth] = alloc(sizeof(vec_int_t));
+          depth_metaarray_pos.data[depth] = alloc(sizeof(vec_int_t));
+          
+          vec_init(depth_metaarray_val.data[depth]);
+          vec_init(depth_metaarray_pos.data[depth]);
+        }
+        
         // clear vectors
-        vec_clear(&depth_metaarray_val);
-        vec_clear(&depth_metaarray_pos);
+        vec_clear(depth_metaarray_val.data[depth]);
+        vec_clear(depth_metaarray_pos.data[depth]);
 
-        int last_valid_pos = 0;
+        int position = -1;
 
         for(i = 0; i < meta_size; i++){
 
-          if(i * meta_size >= curr_depth_arr->length){
-            last_valid_pos++;
+          // If arr size is not exactly a power of 'meta_size' add last elements
+          if((i + 1) * meta_size >= curr_depth_arr->length){
+            position++;
           }
           else{
-            last_valid_pos = i * meta_size;
+            position = (i + 1) * meta_size;
           }
           
-          vec_push(&depth_metaarray_val, curr_depth_arr->data[last_valid_pos]);
-          vec_push(&depth_metaarray_pos, last_valid_pos);
+          vec_push(depth_metaarray_val.data[depth], curr_depth_arr->data[position]);
+          vec_push(depth_metaarray_pos.data[depth], position);
         }
       }
 

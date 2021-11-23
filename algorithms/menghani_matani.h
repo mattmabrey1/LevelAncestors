@@ -62,6 +62,10 @@ int menghani_matani_query(int query_node, int query_level);
 #if LA_ALGORITHM == DYNAMIC
     void add_menghani_matani_leaf(int parent, int leaf, bool is_left_child);
 
+    int recompute_labels(int node_idx, int label);
+
+    void reorder_depth_arr(int depth);
+
     void remove_menghani_matani_leaf(int leaf);
 #endif
 /************************************************************************/

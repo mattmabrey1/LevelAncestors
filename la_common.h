@@ -45,7 +45,7 @@ unsigned int mod_pwr2(int x, int y);
 double get_elapsed_time(struct timespec start, struct timespec end);
 /************************************************************************/
 
-int query_num, query_node, query_level, query_answer;
+int la_operations;
 
 struct timespec start_time, end_time;
 

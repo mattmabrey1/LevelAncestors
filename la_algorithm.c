@@ -52,6 +52,8 @@ void la_initialize(){
 
     #elif LA_ALGORITHM == DYNAMIC
 
+        num_of_queries = num_of_leaf_additions = 0;
+
         vec_init(&tree);
         vec_init(&leaves);
 
@@ -77,7 +79,13 @@ void la_initialize(){
 
             vec_init(&depth_meta_size); 
 
+            vec_init(&new_labels);
+
             vec_push(&depth_size, 1);
+
+            num_of_unlabeled_nodes = 0;
+
+            unlabeled_nodes_threshold = (int)floor(tree.length * 0.5); 
 
         #elif LA_ALGORITHM == ALSTRUP
 
@@ -115,91 +123,56 @@ void la_preprocessing(){
 
 void la_execute(){
 
-    int query_node, query_level, query_num;
+    int query_node, query_level, query_answer;
 
     #if LA_ALGORITHM == STATIC
 
+        while(la_operations > 0){
+
+            la_operations--;
+
+            query_node = rand() % n;
+            query_level = rand() % (tree[query_node].depth + 1);
+
+            query_answer = la_query(query_node, query_level);
+
+            #if DEBUG_RESULTS
+                printf("LA(%d, %d) = %d\n", query_node, query_level, query_answer);
+
+                validate_query_answer(query_node, query_answer);
+            #endif
+        }
+
     #elif LA_ALGORITHM == DYNAMIC
 
-        while(query_num > 0){
+        while(la_operations > 0){
 
-            query_num--;
+            la_operations--;
 
-            if(rand() & 1 == 0){
+            if((rand() & 1) == 0){
 
                 query_node = rand() % tree.length;
                 query_level = rand() % (tree.data[query_node]->depth + 1);
 
-                // Do query
-                #if LA_ALGORITHM == TABLE
-                    query_answer = table_query(query_node, query_level);
-                #elif LA_ALGORITHM == JUMP_POINTER
-                    query_answer = jump_pointer_query(query_node, query_level);
-                #elif LA_ALGORITHM == LADDER
-                    query_answer = ladder_query(query_node, query_level);
-                #elif LA_ALGORITHM == JUMP_LADDER
-                    query_answer = jump_ladder_query(query_node, query_level);
-                #elif LA_ALGORITHM == MACRO_MICRO
-                    query_answer = macro_micro_query(query_node, query_level);
-                #elif LA_ALGORITHM == MENGHANI_MATANI
-                    query_answer = menghani_matani_query(query_node, query_level);
-                #elif LA_ALGORITHM == HAGERUP
-                    query_answer = hagerup_query(query_node, query_level);
-                #elif LA_ALGORITHM == ALSTRUP
-                    query_answer = alstrup_query(query_node, query_level);
-                #endif
+                query_answer = la_query(query_node, query_level);
 
                 #if DEBUG_RESULTS
                     printf("LA(%d, %d) = %d\n", query_node, query_level, query_answer);
 
                     validate_query_answer(query_node, query_answer);
                 #endif
+
+                num_of_queries++;
             }
             else{
                 // Add leaf
                 add_leaf(leaves.data[rand() % leaves.length]);
+
+                num_of_leaf_additions++;
             }
         }
         
     #endif 
-}
-
-// Read in and process the number of queries and then all of the queries from standard input
-void la_process_queries(){
-
-    int i;
-    char c;
-
-    c = getchar();
-    scanf("%d\n", &query_num);
-    for (i = 0; i < query_num; i++)
-    {
-        scanf("%d, %d\n", &query_node, &query_level);
-
-        #if LA_ALGORITHM == TABLE
-            query_answer = table_query(query_node, query_level);
-        #elif LA_ALGORITHM == JUMP_POINTER
-            query_answer = jump_pointer_query(query_node, query_level);
-        #elif LA_ALGORITHM == LADDER
-            query_answer = ladder_query(query_node, query_level);
-        #elif LA_ALGORITHM == JUMP_LADDER
-            query_answer = jump_ladder_query(query_node, query_level);
-        #elif LA_ALGORITHM == MACRO_MICRO
-            query_answer = macro_micro_query(query_node, query_level);
-        #elif LA_ALGORITHM == MENGHANI_MATANI
-            query_answer = menghani_matani_query(query_node, query_level);
-        #elif LA_ALGORITHM == HAGERUP
-            query_answer = hagerup_query(query_node, query_level);
-        #elif LA_ALGORITHM == ALSTRUP
-            query_answer = alstrup_query(query_node, query_level);
-        #endif
-
-        #if DEBUG_RESULTS
-            printf("LA(%d, %d) = %d\n", query_node, query_level, query_answer);
-
-            validate_query_answer(query_node, query_answer);
-        #endif
-    }
 }
 
 int la_query(int query_node, int query_level){
@@ -226,7 +199,7 @@ int la_query(int query_node, int query_level){
 void validate_query_answer(int query_node, int query_answer){
 
     int curr_parent = query_node;
-    int node_depth;
+    int node_depth, query_level;
 
  	while(curr_parent >= 0){
 
@@ -261,35 +234,35 @@ void validate_query_answer(int query_node, int query_answer){
 
 #if LA_ALGORITHM == DYNAMIC
 
-    void add_leaf(int parent){
+    void add_leaf(int parent_idx){
 
         bool is_left_child = false;
 
-        node* parent_node = tree.data[parent];
+        node* parent_node = tree.data[parent_idx];
         node* leaf_node = alloc(sizeof(node));
+
+        int leaf_idx = tree.length;
 
         init_node(leaf_node);
         vec_push(&tree, leaf_node);
 
-        int leaf = tree.length - 1;
-
-        leaf_node->parent = parent;
+        leaf_node->parent = parent_idx;
         leaf_node->depth = parent_node->depth + 1;
 
         if (parent_node->left == -1) 
         {
-            parent_node->left = leaf;
+            parent_node->left = leaf_idx;
 
             is_left_child = true;
 
-            vec_push(&leaves, leaf);
+            vec_push(&leaves, leaf_idx);
             leaf_node->leaf_pos = leaves.length - 1;
         }
         else if(parent_node->right == -1)
         {
-            parent_node->right = leaf;
+            parent_node->right = leaf_idx;
             
-            leaves.data[parent_node->leaf_pos] = leaf;
+            leaves.data[parent_node->leaf_pos] = leaf_idx;
             leaf_node->leaf_pos = parent_node->leaf_pos;
             parent_node->leaf_pos = -1;
         }
@@ -300,34 +273,21 @@ void validate_query_answer(int query_node, int query_answer){
         }
 
         #if LA_ALGORITHM == TABLE
-            add_table_leaf(parent, leaf, is_left_child);
+            add_table_leaf(parent_idx, leaf_idx, is_left_child);
         #elif LA_ALGORITHM == JUMP_POINTER
-            add_jump_pointer_leaf(parent, leaf, is_left_child);
+            add_jump_pointer_leaf(parent_idx, leaf_idx, is_left_child);
         #elif LA_ALGORITHM == LADDER
-            add_ladder_leaf(parent, leaf, is_left_child);
+            add_ladder_leaf(parent_idx, leaf_idx, is_left_child);
         #elif LA_ALGORITHM == JUMP_LADDER
-            add_jump_ladder_leaf(parent, leaf, is_left_child);
+            add_jump_ladder_leaf(parent_idx, leaf_idx, is_left_child);
         #elif LA_ALGORITHM == MACRO_MICRO
-            add_macro_micro_leaf(parent, leaf, is_left_child);
+            add_macro_micro_leaf(parent_idx, leaf_idx, is_left_child);
         #elif LA_ALGORITHM == MENGHANI_MATANI
-            add_menghani_matani_leaf(parent, leaf, is_left_child);
+            add_menghani_matani_leaf(parent_idx, leaf_idx, is_left_child);
         #elif LA_ALGORITHM == HAGERUP
-            add_hagerup_leaf(parent, leaf, is_left_child);
+            add_hagerup_leaf(parent_idx, leaf_idx, is_left_child);
         #elif LA_ALGORITHM == ALSTRUP
-            add_alstrup_leaf(parent, leaf, is_left_child);
+            add_alstrup_leaf(parent_idx, leaf_idx, is_left_child);
         #endif
     }   
-
-    void la_process_leaf_additions(){
-
-        int parent;
-        char c;
-
-        for (int i = 0; i < 100000; i++)
-        {
-            parent = leaves.data[rand() % leaves.length];
-
-            add_leaf(parent);
-        }
-    }
 #endif
