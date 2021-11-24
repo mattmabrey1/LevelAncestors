@@ -149,7 +149,7 @@ void la_execute(){
 
             la_operations--;
 
-            if((rand() & 1) == 0){
+            if((float)((double)rand() / (double)RAND_MAX) > ratio){
 
                 query_node = rand() % tree.length;
                 query_level = rand() % (tree.data[query_node]->depth + 1);

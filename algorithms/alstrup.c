@@ -420,8 +420,6 @@
 
                 M = (1 << r0);
 
-                printf("New M = %d   r0 = %d\n", M, r0);
-
                 // Destroying old micro structures and re-initalizing since reallocating everything might take more time
                 // when we don't care about the old data inside
                 for (int i = 0; i < node_table.length; i++)
@@ -454,7 +452,6 @@
             if (N < floored_log_arr_size)
             {
                 N = floored_log_arr_size;
-                printf("New N = %d\n", N);
 
                 // Extend bitindex
                 build_bitindex(N);

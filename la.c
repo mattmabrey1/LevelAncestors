@@ -14,18 +14,26 @@ int main(int argc, char *argv[])
 
     scanf("%d\n", &n);
 
-    if (argc != 2)
+    if (argc < 2)
     {
-        printf("\nUsage: ./<algorithm> <number_of_la_operations> <seed (default = 1)> < <tree>\n\n");
+        printf("\nUsage: ./<algorithm> <number_of_la_operations> <operation_ratio (default 0.5)> <seed (default = 1)> < <tree>\n\n");
         printf("The tree is read from the standard input.\n\n");
         exit(0);
     }
 
     la_operations = atoi(argv[1]);
 
-    // Set random number generator seed
+    // Set leaf addition 
     if (argc == 3){
-        srand(atoi(argv[2]));
+        ratio = atof(argv[3]);
+    }
+    else{
+        ratio = 0.5;
+    }
+
+    // Set random number generator seed
+    if (argc == 4){
+        srand(atoi(argv[3]));
     }
     else{
         srand(1);
@@ -180,6 +188,7 @@ int main(int argc, char *argv[])
     printf("\tExecution Time: %f seconds\n", get_elapsed_time(start_time, end_time));
 
     #if LA_ALGORITHM == DYNAMIC
+        la_operations = num_of_queries + num_of_leaf_additions;
         printf("\tQueries: %d  %f%%\n", num_of_queries, ((float)num_of_queries / la_operations));
         printf("\tLeaf Additions: %d  %f%%\n", num_of_leaf_additions, ((float)num_of_leaf_additions / la_operations));
     #endif

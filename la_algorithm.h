@@ -104,5 +104,6 @@ typedef struct node_struct node;
         vec_int_t leaves;
 
         int num_of_queries, num_of_leaf_additions;  /* The number of queries and leaf additions exectued over the program		*/
+        float ratio;
     #endif
 #endif

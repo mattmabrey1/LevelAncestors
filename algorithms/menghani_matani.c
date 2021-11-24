@@ -151,7 +151,7 @@
 
     int menghani_matani_query(int query_node, int query_level){
 
-      int l, r;
+      int l, r, query_answer;
 
       if(tree[query_node].depth == query_level){
         query_answer = query_node;
@@ -295,7 +295,7 @@
       else{
           // Set the left and right pointers to the position of node with the max value less than the goal value
           *l = *r = depth_metaarray_pos.data[d]->data[max_idx];
-
+          
           // If this value isn't the last value in the meta array, 
           // then set the right pointer so we only binary search a partition of the main depth_arr
           if(max_idx + 1 < depth_metaarray_pos.data[d]->length){
@@ -474,11 +474,11 @@
         for(i = 0; i < meta_size; i++){
 
           // If arr size is not exactly a power of 'meta_size' add last elements
-          if((i + 1) * meta_size >= curr_depth_arr->length){
-            position++;
+          if(((i + 1) * meta_size) - 1 >= curr_depth_arr->length){
+            position = curr_depth_arr->length - (meta_size - i);
           }
           else{
-            position = (i + 1) * meta_size;
+            position = ((i + 1) * meta_size) - 1;
           }
           
           vec_push(depth_metaarray_val.data[depth], curr_depth_arr->data[position]);
