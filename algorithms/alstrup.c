@@ -420,8 +420,6 @@
 
                 M = (1 << r0);
 
-                // Destroying old micro structures and re-initalizing since reallocating everything might take more time
-                // when we don't care about the old data inside
                 for (int i = 0; i < node_table.length; i++)
                 {
                     vec_clear(node_table.data[i]);

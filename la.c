@@ -24,15 +24,15 @@ int main(int argc, char *argv[])
     la_operations = atoi(argv[1]);
 
     // Set leaf addition 
-    if (argc == 3){
-        ratio = atof(argv[3]);
+    if (argc >= 3){
+        ratio = atof(argv[2]);
     }
     else{
         ratio = 0.5;
     }
 
     // Set random number generator seed
-    if (argc == 4){
+    if (argc >= 4){
         srand(atoi(argv[3]));
     }
     else{
