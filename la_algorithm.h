@@ -13,6 +13,27 @@
     #define LA_ALGORITHM TABLE
 #endif
 
+// String for the name of the algorithm
+#if LA_ALGORITHM == TABLE 
+    #define LA_ALGORITHM_STRING "Table"
+#elif LA_ALGORITHM == JUMP_POINTER 
+    #define LA_ALGORITHM_STRING "Jump Pointer"
+#elif LA_ALGORITHM == LADDER 
+    #define LA_ALGORITHM_STRING "Ladder"
+#elif LA_ALGORITHM == JUMP_LADDER 
+    #define LA_ALGORITHM_STRING "Jump Ladder"
+#elif LA_ALGORITHM == MACRO_MICRO 
+    #define LA_ALGORITHM_STRING "Macro Micro"
+#elif LA_ALGORITHM == MENGHANI_MATANI 
+    #define LA_ALGORITHM_STRING "Menghani & Matani"
+#elif LA_ALGORITHM == HAGERUP 
+    #define LA_ALGORITHM_STRING "Hagerup"
+#elif LA_ALGORITHM == BENAMRAM 
+    #define LA_ALGORITHM_STRING "Ben-Amram"
+#elif LA_ALGORITHM == ALSTRUP 
+    #define LA_ALGORITHM_STRING "Alstrup"
+#endif
+
 #ifndef LA_DYNAMIC
     #define STATIC LA_ALGORITHM
     #define DYNAMIC -1

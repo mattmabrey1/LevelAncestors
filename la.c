@@ -178,7 +178,7 @@ int main(int argc, char *argv[])
         printf("\n\t[DEBUG RESULTS MODE ENABLED]");
     #endif
 
-    printf("\n\t---Algorithm %d---\n", LA_ALGORITHM);
+    printf("\n\t---Algorithm %s---\n", LA_ALGORITHM_STRING);
     printf("\tPreprocessing Time: %f seconds\n", get_elapsed_time(start_time, end_time));
 
     clock_gettime(CLOCK_REALTIME, &start_time);
