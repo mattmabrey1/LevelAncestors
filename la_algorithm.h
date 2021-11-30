@@ -58,6 +58,7 @@ struct node_struct
     int size;
     int rank;
     int micro_tree;
+    int macro_index;
 #endif
 };
 typedef struct node_struct node;

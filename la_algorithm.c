@@ -11,7 +11,7 @@ void init_node(node* node){
     #if LA_ALGORITHM == MENGHANI_MATANI
         node->label = -1;
     #elif LA_ALGORITHM == ALSTRUP
-        node->size = node->rank = node->micro_tree = -1;
+        node->size = node->rank = node->micro_tree = node->macro_index = -1;
     #endif
 }
 
