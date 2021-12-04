@@ -48,23 +48,23 @@ int r0, M, N;
 /************************************************************************/
 void alstrup_preprocessing();
 
-void build_bitindex(int N);
+void build_bitindex();
 
-void recurse_micro(int v);
+void build_micro_trees(int v);
 
-int calc_subtree(int v);
+int calc_subtree_size(int v);
 
-int calc_macro_subtree(int v);
+int calc_macro_subtree_size(int v);
 
 int calc_rank(int depth, int subtree_size);
 
-void calculate_jumpM();
+void calc_jumpM();
 
 void init_micro();
 
 void add_macro_node(int v);
 
-void preprocess_macro_tree();
+void build_macro_tree();
 
 int LA_macro_tree(int v, int d);
 
