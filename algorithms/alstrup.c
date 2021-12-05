@@ -408,18 +408,18 @@
         /************************************************************************/
         /* Querying						*/
         /************************************************************************/
-        int LA_macro(int v, int d){
+        int LA_macro(int v, int x){
 
-            int i = floor(log_base2(d + 1));
+            int i = floor(log_base2(x + 1));
             
-            int distance = macro_tree.data[v]->depth - d;	
+            int answer_depth = macro_tree.data[v]->depth - x;
             
             // Loops a max of 4 times
-            while( (2 * (macro_tree.data[v]->depth - distance)) >= (1 << i)){ 
+            while( (2 * (macro_tree.data[v]->depth - answer_depth)) >= (1 << i)){ 
                 v = jump.data[v]->data[i - 1];
             }
 
-            return levelanc.data[v]->data[macro_tree.data[v]->depth - distance];
+            return levelanc.data[v]->data[macro_tree.data[v]->depth - answer_depth];
         }
 
         int LA_micro(int v, int d)
@@ -449,7 +449,7 @@
             }
 
             // Now w is the first macro node on the path from v to root(v)
-            if (tree.data[w]->depth >= d)
+            if (tree.data[w]->depth > d)
             {
                 // Now find the macro node of least depth on the path from v to LA(v, d)
                 v = LA_macro(tree.data[w]->macro_index, (int)floor((tree.data[w]->depth - d) / (double)M));
