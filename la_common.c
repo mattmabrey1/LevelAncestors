@@ -51,4 +51,13 @@ unsigned int highest_pwrOf2(unsigned int x)
 unsigned int mod_pwr2(int x, int y){
 	return x & (y - 1);
 }
+
+double get_elapsed_time(struct timespec start, struct timespec end){
+
+  long seconds = end.tv_sec - start.tv_sec;
+  long nanoseconds = end.tv_nsec - start.tv_nsec;
+  double elapsed_time = seconds + (nanoseconds * 0.000000001);
+
+  return elapsed_time;
+}
 /************************************************************************/

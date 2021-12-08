@@ -41,11 +41,13 @@ unsigned int highest_pwrOf2(unsigned int x);
 
 // Performs the regular modulo operation with just a bit operation. y must be a power of 2
 unsigned int mod_pwr2(int x, int y);
+
+double get_elapsed_time(struct timespec start, struct timespec end);
 /************************************************************************/
 
-int query_num, query_node, query_level, query_answer;
+int la_operations;
 
-struct timespec start_proc, end_proc, start_query, end_query;
+struct timespec start_time, end_time;
 
 #endif
 

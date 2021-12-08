@@ -13,6 +13,7 @@ all:
 	gcc -D LA_ALGORITHM=5 $(MAIN_LA_FILES) algorithms/macro_micro.c algorithms/ladder.c -o macro_micro -lm
 	gcc -D LA_ALGORITHM=6 $(MAIN_LA_FILES) algorithms/menghani_matani.c -o menghani_matani -lm
 	gcc -D LA_ALGORITHM=7 $(MAIN_LA_FILES) algorithms/hagerup.c -o hagerup -lm
+	gcc -D LA_ALGORITHM=9 $(MAIN_LA_FILES) algorithms/alstrup.c -o alstrup -lm
 
 debug: 
 	gcc tree_gen/tree_generator.c -o tree_generator -lm
@@ -25,6 +26,7 @@ debug:
 	gcc -D LA_ALGORITHM=5 $(DEBUG_RESULTS) $(MAIN_LA_FILES) algorithms/macro_micro.c algorithms/ladder.c -o macro_micro -lm
 	gcc -D LA_ALGORITHM=6 $(DEBUG_RESULTS) $(MAIN_LA_FILES) algorithms/menghani_matani.c -o menghani_matani -lm
 	gcc -D LA_ALGORITHM=7 $(DEBUG_RESULTS) $(MAIN_LA_FILES) algorithms/hagerup.c -o hagerup -lm
+	gcc -D LA_ALGORITHM=9 $(DEBUG_RESULTS) $(MAIN_LA_FILES) algorithms/alstrup.c -o alstrup -lm
 
 dynamic: 
 	gcc tree_gen/tree_generator.c -o tree_generator -lm
@@ -37,6 +39,7 @@ dynamic:
 	gcc -D LA_ALGORITHM=5 $(LA_DYNAMIC) $(MAIN_LA_FILES) algorithms/macro_micro.c algorithms/ladder.c -o macro_micro -lm
 	gcc -D LA_ALGORITHM=6 $(LA_DYNAMIC) $(MAIN_LA_FILES) algorithms/menghani_matani.c -o menghani_matani -lm
 	gcc -D LA_ALGORITHM=7 $(LA_DYNAMIC) $(MAIN_LA_FILES) algorithms/hagerup.c -o hagerup -lm
+	gcc -D LA_ALGORITHM=9 $(LA_DYNAMIC) $(MAIN_LA_FILES) algorithms/alstrup.c -o alstrup -lm
 
 dynamic-debug: 
 	gcc tree_gen/tree_generator.c -o tree_generator -lm
@@ -49,6 +52,7 @@ dynamic-debug:
 	gcc -D LA_ALGORITHM=5 $(DEBUG_RESULTS) $(LA_DYNAMIC) $(MAIN_LA_FILES) algorithms/macro_micro.c algorithms/ladder.c -o macro_micro -lm
 	gcc -D LA_ALGORITHM=6 $(DEBUG_RESULTS) $(LA_DYNAMIC) $(MAIN_LA_FILES) algorithms/menghani_matani.c -o menghani_matani -lm
 	gcc -D LA_ALGORITHM=7 $(DEBUG_RESULTS) $(LA_DYNAMIC) $(MAIN_LA_FILES) algorithms/hagerup.c -o hagerup -lm
+	gcc -D LA_ALGORITHM=9 $(DEBUG_RESULTS) $(LA_DYNAMIC) $(MAIN_LA_FILES) algorithms/alstrup.c -o alstrup -lm
 
 clean:
 	rm tree_generator
@@ -61,3 +65,4 @@ clean:
 	rm macro_micro
 	rm menghani_matani
 	rm hagerup
+	rm alstrup

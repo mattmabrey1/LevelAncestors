@@ -6,13 +6,38 @@ int main(int argc, char *argv[])
     int current_pos, parent_pos, current_depth;
     char c;
 
-    clock_gettime(CLOCK_REALTIME, &start_proc);
+    clock_gettime(CLOCK_REALTIME, &start_time);
     
     /************************************************************************/
     /* Process input and create tree					*/
     /************************************************************************/
 
     scanf("%d\n", &n);
+
+    if (argc < 2)
+    {
+        printf("\nUsage: ./<algorithm> <number_of_la_operations> <operation_ratio (default 0.5)> <seed (default = 1)> < <tree>\n\n");
+        printf("The tree is read from the standard input.\n\n");
+        exit(0);
+    }
+
+    la_operations = atoi(argv[1]);
+
+    // Set leaf addition 
+    if (argc >= 3){
+        ratio = atof(argv[2]);
+    }
+    else{
+        ratio = 0.5;
+    }
+
+    // Set random number generator seed
+    if (argc >= 4){
+        srand(atoi(argv[3]));
+    }
+    else{
+        srand(1);
+    }
 
     current_pos = 0;
     parent_pos = 0;
@@ -39,24 +64,33 @@ int main(int argc, char *argv[])
                     tree[parent_pos].left = current_pos;
                     if (DEBUG_INPUT) printf("tree[%d].left = %d\n", parent_pos, current_pos);
                 }
+                else if (tree[parent_pos].right == -1)
+                {
+                    tree[parent_pos].right = current_pos;
+                    if (DEBUG_INPUT) printf("tree[%d].right = %d\n", parent_pos, current_pos);
+                }
                 else
                 {
-                    if (tree[parent_pos].right == -1)
-                    {
-                        tree[parent_pos].right = current_pos;
-                        if (DEBUG_INPUT) printf("tree[%d].right = %d\n", parent_pos, current_pos);
-                    }
-                    else
-                    {
-                        printf("Illegal input: Input tree is not binary\n");
-                        exit(-1);
-                    }
+                    printf("Illegal input: Input tree is not binary\n");
+                    exit(-1);
                 }
 
             #elif LA_ALGORITHM == DYNAMIC
 
                 tree.data[++current_pos]->parent = parent_pos;
                 tree.data[current_pos]->depth = ++current_depth;
+
+                #if LA_ALGORITHM == MENGHANI_MATANI
+                
+                    if(current_depth >= depth_size.length){
+                        vec_push(&depth_size, 1);
+                    }
+                    else{
+                        depth_size.data[current_depth]++;
+                    }
+
+                    tree.data[current_pos]->label = current_pos;
+                #endif
 
                 if (tree.data[parent_pos]->left == -1)
                 {
@@ -68,33 +102,29 @@ int main(int argc, char *argv[])
                         printf("tree.data[%d]->left = %d\n", parent_pos, current_pos);
                     }
                 }
+                else if (tree.data[parent_pos]->right == -1)
+                {
+                    tree.data[parent_pos]->right = current_pos;
+
+                    leaves.data[tree.data[parent_pos]->leaf_pos] = current_pos;
+                    tree.data[current_pos]->leaf_pos = tree.data[parent_pos]->leaf_pos;
+                    tree.data[parent_pos]->leaf_pos = -1;
+
+                    if (DEBUG_INPUT)
+                    {
+                        printf("tree.data[%d]->right = %d\n", parent_pos, current_pos);
+                    }
+                }
                 else
                 {
-                    if (tree.data[parent_pos]->right == -1)
-                    {
-                        tree.data[parent_pos]->right = current_pos;
-
-                        leaves.data[tree.data[parent_pos]->leaf_pos] = current_pos;
-                        tree.data[current_pos]->leaf_pos = tree.data[parent_pos]->leaf_pos;
-                        tree.data[parent_pos]->leaf_pos = -1;
-
-                        if (DEBUG_INPUT)
-                        {
-                            printf("tree.data[%d]->right = %d\n", parent_pos, current_pos);
-                        }
-                    }
-                    else
-                    {
-                        printf("Illegal input: Input tree is not binary\n");
-                        exit(-1);
-                    }
+                    printf("Illegal input: Input tree is not binary\n");
+                    exit(-1);
                 }
 
             
             #endif
             
             parent_pos = current_pos;
-        
         }
         else if (c == '0')
         {
@@ -142,26 +172,26 @@ int main(int argc, char *argv[])
     /************************************************************************/
     la_preprocessing();
 
-    clock_gettime(CLOCK_REALTIME, &end_proc);
-    clock_gettime(CLOCK_REALTIME, &start_query);
-
-    la_process_queries();
-
-    clock_gettime(CLOCK_REALTIME, &end_query);
-    
-    long proc_seconds = end_proc.tv_sec - start_proc.tv_sec;
-    long proc_nanoseconds = end_proc.tv_nsec - start_proc.tv_nsec;
-    double preprocessing_time = proc_seconds + (proc_nanoseconds * 0.000000001);
-
-    long query_seconds = end_query.tv_sec - start_query.tv_sec;
-    long query_nanoseconds = end_query.tv_nsec - start_query.tv_nsec;
-    double query_time = query_seconds + (query_nanoseconds * 0.000000001);
+    clock_gettime(CLOCK_REALTIME, &end_time);
 
     #if DEBUG_RESULTS
         printf("\n\t[DEBUG RESULTS MODE ENABLED]");
     #endif
 
-    printf("\n\t---Algorithm %d---\n", LA_ALGORITHM);
-    printf("\tPreprocessing Time: %f seconds\n", preprocessing_time);
-    printf("\tQuery Time: %f seconds\n\n", query_time);
+    printf("\n\t---Algorithm %s---\n", LA_ALGORITHM_STRING);
+    printf("\tPreprocessing Time: %f seconds\n", get_elapsed_time(start_time, end_time));
+
+    clock_gettime(CLOCK_REALTIME, &start_time);
+    la_execute();
+    clock_gettime(CLOCK_REALTIME, &end_time);
+    
+    printf("\tExecution Time: %f seconds\n", get_elapsed_time(start_time, end_time));
+
+    #if LA_ALGORITHM == DYNAMIC && DEBUG_RESULTS
+        la_operations = num_of_queries + num_of_leaf_additions;
+        printf("\tQueries: %d  %f%%\n", num_of_queries, ((float)num_of_queries / la_operations));
+        printf("\tLeaf Additions: %d  %f%%\n", num_of_leaf_additions, ((float)num_of_leaf_additions / la_operations));
+    #endif
+
+    printf("\n");
 }

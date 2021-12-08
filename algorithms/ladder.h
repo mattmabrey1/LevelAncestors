@@ -12,14 +12,16 @@ struct ladder_index_node
   unsigned int pos;
 } *ladder_index;
 
+unsigned int *ladder_roots;
+
 #if LA_ALGORITHM == STATIC
   // Static data structures
   unsigned int **ladder_table;
-
-  unsigned int *ladder_roots;
 #else
   // Dynamic data structures
-
+  vec_vec_t ladder_table;
+  vec_int_t ladder_index_no;
+  vec_int_t ladder_index_pos;
 #endif
 /************************************************************************/
 

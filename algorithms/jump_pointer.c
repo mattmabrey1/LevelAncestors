@@ -19,7 +19,7 @@
       for (i = 1; i < n; i++)
       {
         frexp((double)tree[i].depth, &mylog);
-
+        
         mylog--;
 
         jump_table[i] = alloc((mylog+1)*sizeof(int));
@@ -36,7 +36,6 @@
           next = jump_table[next][j-1];
         }
       }
-
 
       #if DEBUG_JUMP == 1
         for (i = 1; i < n; i++)
