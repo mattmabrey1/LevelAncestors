@@ -257,7 +257,13 @@
 
                 tree.data[v]->micro_tree = node_table.length - 1;
 
-                vec_push(&anc, 1);
+                if(anc.capacity > v){
+                    anc.data[v] = 1;
+                    anc.length++;
+                }
+                else{
+                    vec_push(&anc, 1);
+                }
 
                 int curr_parent = v;
 
@@ -278,10 +284,19 @@
                 micro_tree = node_table.data[parent_tree];
                 tree.data[v]->micro_tree = parent_tree;
 
-                vec_push(&anc, (1 << (micro_tree->length)) + anc.data[tree.data[v]->parent]);
+                if(anc.capacity > v){
+                    anc.data[v] = (1 << (micro_tree->length)) + anc.data[tree.data[v]->parent];
+                    anc.length++;
+                }
+                else{
+                    vec_push(&anc, (1 << (micro_tree->length)) + anc.data[tree.data[v]->parent]);
+                }
+
+                
             }
 
             vec_push(micro_tree, v);
+            
 
             if (tree.data[v]->left != -1){
                 build_micro_trees(tree.data[v]->left);
@@ -370,8 +385,8 @@
                     parent = macro_tree.data[parent]->parent;
                 }
 
-                
-                size = floor(log_base2(macro_tree.data[i]->depth + 1));
+                // Use log2 function instead of log_base2 since we want it to return a float
+                size = ceil(log2(macro_tree.data[i]->depth + 1));
                 parent = macro_tree.data[i]->parent;
 
                 for(j = 0; j < size; j++){
@@ -393,7 +408,7 @@
         /************************************************************************/
         int LA_macro(int v, int x){
 
-            int i = floor(log_base2(x + 1));
+            int i = log_base2(x + 1);
             
             int answer_depth = macro_tree.data[v]->depth - x;
             
@@ -447,6 +462,7 @@
                 return LA_micro(v, tree.data[v]->depth - d);
             }
 
+
             v = tree.data[micro_root]->parent;
             micro_root = node_table.data[tree.data[v]->micro_tree]->data[0];
             
@@ -475,10 +491,10 @@
             int curr_parent = parent;
 
             // M has increased, update metadata
-            if (r0 < (int)floor(log_base2(log_base2(tree.length)) - 1))
+            if (r0 < log_base2(log_base2(tree.length)) - 1)
             {
                 
-                r0 = (int)floor(log_base2(log_base2(tree.length)) - 1);
+                r0 = log_base2(log_base2(tree.length)) - 1;
 
                 M = (1 << r0);
 
@@ -519,13 +535,12 @@
 
                 build_micro_trees(leaf);
 
-
                 add_leaf_step(jumpM.data[leaf], jumpM.data[jumpM.data[leaf]]);
             }
 
-            if (N < (int)floor(log_base2(tree.length) / 2))
+            if (N < log_base2(tree.length) / 2)
             {
-                N = (int)floor(log_base2(tree.length) / 2);
+                N = log_base2(tree.length) / 2;
 
                 // Extend bitindex
                 build_bitindex();
@@ -546,7 +561,7 @@
 
                 vec_push(levelanc.data[macro_index], macro_index);
 
-                for(int i = 0; i < (int)floor(log_base2(macro_tree.data[macro_index]->depth + 1)); i++){
+                for(int i = 0; i < ceil(log2(macro_tree.data[macro_index]->depth + 1)); i++){
                     
                     if(mod_pwr2(macro_tree.data[parent_macro_index]->depth, (1 << i)) == 0){
                         w = parent_macro_index;

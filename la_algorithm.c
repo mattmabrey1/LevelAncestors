@@ -170,7 +170,7 @@ void la_execute(){
                     
                     validate_query_answer(query_node, query_answer);
                 #endif
-
+                
                 num_of_queries++;
             }
             else{
