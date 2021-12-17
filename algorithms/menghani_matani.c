@@ -195,9 +195,7 @@
         int d, meta_pos, meta_spaces_left, remaining_nodes;
 
         // Allocate all of the depth arrays
-        for(d = 0; d < n; d++){
-            
-            if(depth_size.data[d] < 1) break;
+        for(d = 0; d < depth_size.length; d++){
 
             vec_push(&depth_arr, alloc(sizeof(vec_int_t)));
 
@@ -375,9 +373,8 @@
 
       // readjust whole tree
       if(num_of_unlabeled_nodes >= unlabeled_nodes_threshold){
-      
-        recompute_labels(0, 0);
 
+        recompute_labels(0, 0);
         vec_reserve(&depth_metaarray_val, depth_arr.length);
         vec_reserve(&depth_metaarray_pos, depth_arr.length);
 
@@ -402,9 +399,8 @@
 
         if(node->depth >= depth_arr.length){
 
-          vec_int_t* vec = alloc(sizeof(vec_int_t));
-          vec_init(vec);
-          vec_push(&depth_arr, vec);
+          vec_push(&depth_arr, alloc(sizeof(vec_int_t)));
+          vec_init(vec_last(&depth_arr));
         }
         
         vec_push(depth_arr.data[node->depth], node_idx);
@@ -420,7 +416,7 @@
     }
 
     void reorder_depth_arr(int depth){
-        
+       
       vec_int_t* curr_depth_arr = depth_arr.data[depth];
 
       int i, prev_size;
@@ -431,24 +427,27 @@
 
       prev_size = depth_size.data[depth];
 
-      vec_clear(&new_labels);
+      if(prev_size > 0){
 
-      for (i = prev_size; i < curr_depth_arr->length; i++){
-        vec_push(&new_labels, curr_depth_arr->data[i]);
-      }
+        vec_clear(&new_labels);
 
-      i = prev_size - 1;
-
-      // Reorder depth array
-      while(new_labels.length > 0){
-
-        if (i >= 0 && tree.data[curr_depth_arr->data[i]]->label > tree.data[vec_last(&new_labels)]->label){
-          curr_depth_arr->data[i + new_labels.length] = curr_depth_arr->data[i];
-          i--;
+        for (i = prev_size; i < curr_depth_arr->length; i++){
+          vec_push(&new_labels, curr_depth_arr->data[i]);
         }
-        else{
-          curr_depth_arr->data[i + new_labels.length] = vec_last(&new_labels);
-          new_labels.length--;
+
+        i = prev_size - 1;
+
+        // Reorder depth array
+        while(new_labels.length > 0){
+
+          if (i >= 0 && tree.data[curr_depth_arr->data[i]]->label > tree.data[vec_last(&new_labels)]->label){
+            curr_depth_arr->data[i + new_labels.length] = curr_depth_arr->data[i];
+            i--;
+          }
+          else{
+            curr_depth_arr->data[i + new_labels.length] = vec_last(&new_labels);
+            new_labels.length--;
+          }
         }
       }
 
@@ -456,6 +455,23 @@
       if(curr_depth_arr->length >= SQRT_SEARCH_MINIMUM){
 
         int meta_size = (int)ceil(sqrt((double)curr_depth_arr->length));
+
+        if(prev_size < SQRT_SEARCH_MINIMUM){
+
+          depth_metaarray_val.data[depth] = alloc(sizeof(vec_int_t));
+          depth_metaarray_pos.data[depth] = alloc(sizeof(vec_int_t));
+          
+          vec_init(depth_metaarray_val.data[depth]);
+          vec_init(depth_metaarray_pos.data[depth]);
+
+          vec_reserve(depth_metaarray_val.data[depth], meta_size);
+          vec_reserve(depth_metaarray_pos.data[depth], meta_size);
+        }
+
+        // clear vectors
+        vec_clear(depth_metaarray_val.data[depth]);
+        vec_clear(depth_metaarray_pos.data[depth]);
+        int position = -1;
 
         if(depth_metaarray_val.data[depth] == NULL){
           depth_metaarray_val.data[depth] = alloc(sizeof(vec_int_t));
@@ -480,7 +496,8 @@
           else{
             position = ((i + 1) * meta_size) - 1;
           }
-          
+
+
           vec_push(depth_metaarray_val.data[depth], curr_depth_arr->data[position]);
           vec_push(depth_metaarray_pos.data[depth], position);
         }

@@ -187,7 +187,7 @@ int main(int argc, char *argv[])
     
     printf("\tExecution Time: %f seconds\n", get_elapsed_time(start_time, end_time));
 
-    #if LA_ALGORITHM == DYNAMIC
+    #if LA_ALGORITHM == DYNAMIC && DEBUG_RESULTS
         la_operations = num_of_queries + num_of_leaf_additions;
         printf("\tQueries: %d  %f%%\n", num_of_queries, ((float)num_of_queries / la_operations));
         printf("\tLeaf Additions: %d  %f%%\n", num_of_leaf_additions, ((float)num_of_leaf_additions / la_operations));
