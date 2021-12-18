@@ -5,10 +5,12 @@ Research done at The College of New Jersey for studying the practical implementa
 This branch contains the dynamic versions of the level ancestor algorithms. Not all algorithms were able to be converted in 
 
 ## Wiki
-Read more detailed information and guides on the wiki here
+Read more detailed information and guides on the wiki.
+https://github.com/mattmabrey1/LevelAncestors/wiki
 
 ## Issues
-Read about known issues/bugs and any remaining work or experiements that can be completed.
+Read about issues, bugs, or any remaining work on the issues page.
+https://github.com/mattmabrey1/LevelAncestors/issues
 
 --- 
 # Quickstart Guide
