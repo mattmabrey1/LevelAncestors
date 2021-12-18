@@ -11,7 +11,7 @@ void init_node(node* node){
     #if LA_ALGORITHM == MENGHANI_MATANI
         node->label = -1;
     #elif LA_ALGORITHM == ALSTRUP
-        node->size = node->rank = node->micro_tree = -1;
+        node->size = node->rank = node->micro_tree = node->macro_index = -1;
     #endif
 }
 
@@ -91,9 +91,18 @@ void la_initialize(){
 
             r0 = (int)floor(log_base2(log_base2(n)) - 1);
             M = (1 << r0);
-            N = 0;
+            N = (int)floor((double)log_base2(tree.length) / 2);
 
             tree.data[0]->micro_tree = 0;
+
+            vec_init(&levelancM);
+            vec_init(&node_table);
+            vec_init(&jumpM);
+            vec_init(&anc);
+            vec_init(&bitindex);
+            vec_init(&macro_tree);
+            vec_init(&levelanc);
+            vec_init(&jump);
         #endif 
 
     #endif
@@ -158,14 +167,13 @@ void la_execute(){
 
                 #if DEBUG_RESULTS
                     printf("LA(%d, %d) = %d\n", query_node, query_level, query_answer);
-
+                    
                     validate_query_answer(query_node, query_answer);
                 #endif
-
+                
                 num_of_queries++;
             }
             else{
-                // Add leaf
                 add_leaf(leaves.data[rand() % leaves.length]);
 
                 num_of_leaf_additions++;

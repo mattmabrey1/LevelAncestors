@@ -45,7 +45,7 @@ unsigned int highest_pwrOf2_divides(unsigned int x)
 unsigned int highest_pwrOf2(unsigned int x) 
 { 
     return 1 << (unsigned int)floor(log_base2(x));
-} 
+}
 
 // Performs the regular modulo operation with just a bit operation. y must be a power of 2
 unsigned int mod_pwr2(int x, int y){

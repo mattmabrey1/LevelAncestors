@@ -473,6 +473,20 @@
         vec_clear(depth_metaarray_pos.data[depth]);
         int position = -1;
 
+        if(depth_metaarray_val.data[depth] == NULL){
+          depth_metaarray_val.data[depth] = alloc(sizeof(vec_int_t));
+          depth_metaarray_pos.data[depth] = alloc(sizeof(vec_int_t));
+          
+          vec_init(depth_metaarray_val.data[depth]);
+          vec_init(depth_metaarray_pos.data[depth]);
+        }
+        
+        // clear vectors
+        vec_clear(depth_metaarray_val.data[depth]);
+        vec_clear(depth_metaarray_pos.data[depth]);
+
+        int position = -1;
+
         for(i = 0; i < meta_size; i++){
 
           // If arr size is not exactly a power of 'meta_size' add last elements
