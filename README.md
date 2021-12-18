@@ -2,7 +2,7 @@
 Research done at The College of New Jersey for studying the practical implementations of proposed Level Ancestor algorithms and the performance of preprocessing and query time for varying tree and query sizes.
 
 ## Branch: **dynamic-la**
-This branch contains the dynamic versions of the level ancestor algorithms. Not all algorithms were able to be converted in 
+This branch contains the dynamic versions of the level ancestor algorithms.
 
 ## Wiki
 Read more detailed information and guides on the wiki.
