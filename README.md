@@ -1,7 +1,18 @@
 # LevelAncestors
 Research done at The College of New Jersey for studying the practical implementations of proposed Level Ancestor algorithms and the performance of preprocessing and query time for varying tree and query sizes.
 
+## Branch: **dynamic-la**
+This branch contains the dynamic versions of the level ancestor algorithms. Not all algorithms were able to be converted in 
+
+## Wiki
+Read more detailed information and guides on the wiki here
+
+## Issues
+Read about known issues/bugs and any remaining work or experiements that can be completed.
+
 --- 
+# Quickstart Guide
+
 ## Compiling the algorithms
 
 - Begin by cloning the repository to your local machine or virtual machine using "git clone"
@@ -15,9 +26,9 @@ Research done at The College of New Jersey for studying the practical implementa
         - make clean : cleans up all algorithm executables from the directory
 
 --- 
-## Creating a tree
+## Generating a tree
 
-To create a tree for the program use the tree_generator executable compiled with every make command as such:
+To generate a tree for the program use the tree_generator executable compiled with every make command as such:
 > ./tree_generator <size_of_tree> <randomization_seed>
 
 The output of the tree generation scripts can be piped into an algorithm as input or stored in a file.
@@ -26,8 +37,11 @@ This can be done with:
 > ./tree_generator <size_of_tree> <seed> > my_generated_tree
   
 A new file will be created called **my_generated_tree**, but you should give it a more descriptive name that includes the size of the tree and possibly seed used to generate it.
+
+The alternative method of piping input directly into the algorithm would be called as such:
+> ./tree_generator <size_of_tree> <seed> | ./algorithm_executable
   
 --- 
 ## Executing an algorithm
-To execute an algorithm you will need the name of the algorithm you want to run as each algorithm compiles into a seperate executable. Using the Jump-pointer algorithm as an example you would call it as such:
-  > ./jump_pointer <number_of_operations> <leaf_insertion_ratio> <randomization_seed> < my_generated_trees
+To execute an algorithm you will need the name of the algorithm you want to run as each algorithm compiles into a seperate executable. Using the Jump-pointer algorithm as an example, you would call it as such:
+  > ./jump_pointer <number_of_operations> <leaf_insertion_ratio (0-1.0)> <randomization_seed> < my_generated_tree
