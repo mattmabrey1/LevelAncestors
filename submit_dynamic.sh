@@ -1,15 +1,15 @@
 #!/usr/bin/bash
 
 #SBATCH --chdir=./
-#SBATCH --mail-user=mabreym1@tcnj.edu
+#SBATCH --mail-user=*REPLACE_WITH_YOUR_TCNJ_EMAIL*
 #SBATCH --mail-type=ALL
-#SBATCH --job-name=Level_Ancestor_Dyn
-#SBATCH --output=lvl_anc_dyn.%j.out
-#SBATCH --nodes=1            # Set to the # of servers you need
-#SBATCH --ntasks=1           # Set to the # of CPU cores you want to use
-#SBATCH --partition=amd      # Set to the partition/queue to use
-#SBATCH --exclusive          # Reserve the entire machine for my job
-#SBATCH --time=2-00:00:00    # Format is days-hh:mm:ss
+#SBATCH --job-name=Level_Ancestor_Dyn   # How the job will appear in Active Jobs list
+#SBATCH --output=lvl_anc_dyn.%j.out     # Name of the output file created for the job
+#SBATCH --nodes=1                       # Set to the # of servers you need
+#SBATCH --ntasks=1                      # Set to the # of CPU cores you want to use
+#SBATCH --partition=amd                 # Set to the partition/queue to use
+#SBATCH --exclusive                     # Reserve the entire machine for my job
+#SBATCH --time=2-00:00:00               # Format is days-hh:mm:ss
 
 # Program Variables
 tree_size=100000    # the number of nodes in the generated binary tree
@@ -30,7 +30,7 @@ RunExperiment () {
 
         ./menghani_matani $num_of_operations $1 $2 < la_input
 
-        # ./alstrup $num_of_operations $1 $2 < la_input
+        ./alstrup $num_of_operations $1 $2 < la_input
         
     done
 }
